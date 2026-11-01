@@ -1,0 +1,191 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Design tokens. Light is the default; .dark on <html> switches the palette. */
+:root {
+  --bg: #f7f8fb;
+  --surface: #ffffff;
+  --surface-2: #f1f3f8;
+  --surface-3: #e7eaf2;
+  --border: #dfe3ec;
+  --text: #0e1525;
+  --muted: #566078;
+  --faint: #5f687d; /* ≥4.5:1 on surface, surface-2 and surface-3 (WCAG AA) */
+  --brand: #3b5bdb;
+  --brand-strong: #2f49b8;
+  --brand-soft: #e7ecff;
+  --physics: #4361ee;
+  --physics-soft: #e8edff;
+  --physics-ink: #2c45c9;
+  --chemistry: #0e9f8a;
+  --chemistry-soft: #dcf5f0;
+  --chemistry-ink: #0a7a6a;
+  --biology: #5b8f12;
+  --biology-soft: #edf6dc;
+  --biology-ink: #44700b;
+  --warn: #b45309;
+  --warn-soft: #fef3c7;
+  --danger: #c2410c;
+  --ok: #15803d;
+  --canvas-bg: #eef1f7;
+  --shadow: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px rgb(15 23 42 / 0.06);
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0a0e17;
+  --surface: #111725;
+  --surface-2: #161d2e;
+  --surface-3: #1e2740;
+  --border: #253048;
+  --text: #e8ecf5;
+  --muted: #a1abc2;
+  --faint: #8a95ad; /* ≥4.5:1 on surface, surface-2 and surface-3 (WCAG AA) */
+  --brand: #7b93ff;
+  --brand-strong: #9aadff;
+  --brand-soft: #1b2447;
+  --physics: #7b93ff;
+  --physics-soft: #1a2349;
+  --physics-ink: #a9b8ff;
+  --chemistry: #2ccfb5;
+  --chemistry-soft: #0f2f2c;
+  --chemistry-ink: #6be3cf;
+  --biology: #9bd44f;
+  --biology-soft: #1f2b10;
+  --biology-ink: #bce582;
+  --warn: #fbbf24;
+  --warn-soft: #3a2a0a;
+  --danger: #fb923c;
+  --ok: #4ade80;
+  --canvas-bg: #0d1322;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.25);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--border);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-physics: var(--physics);
+  --color-physics-soft: var(--physics-soft);
+  --color-physics-ink: var(--physics-ink);
+  --color-chemistry: var(--chemistry);
+  --color-chemistry-soft: var(--chemistry-soft);
+  --color-chemistry-ink: var(--chemistry-ink);
+  --color-biology: var(--biology);
+  --color-biology-soft: var(--biology-soft);
+  --color-biology-ink: var(--biology-ink);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-ok: var(--ok);
+  --color-danger: var(--danger);
+  --color-canvas: var(--canvas-bg);
+  --shadow-card: var(--shadow);
+}
+
+html {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv11", "ss01";
+}
+
+body {
+  background: var(--bg);
+  min-height: 100vh;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Containers that receive focus from code (route changes, dialogs) do not get a ring. */
+[tabindex='-1']:focus-visible {
+  outline: none;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Range input styling shared by all parameter sliders. */
+input[type="range"].slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 28px;
+  background: transparent;
+  cursor: pointer;
+  --fill: 50%;
+  --track: var(--brand);
+}
+input[type="range"].slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--track) var(--fill), var(--surface-3) var(--fill));
+}
+input[type="range"].slider::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-3);
+}
+input[type="range"].slider::-moz-range-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--track);
+}
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--track);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+}
+input[type="range"].slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--track);
+}
+input[type="range"].slider:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hero-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--text) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--text) 5%, transparent) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse at 60% 40%, black 30%, transparent 75%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

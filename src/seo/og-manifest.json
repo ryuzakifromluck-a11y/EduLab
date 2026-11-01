@@ -1,0 +1,150 @@
+{
+  "archimedes-principle": {
+    "input": "8727445651b4",
+    "png": "2d14def9c7e5"
+  },
+  "ballistic-pendulum": {
+    "input": "3178465f9278",
+    "png": "5552c14b8ce0"
+  },
+  "biology": {
+    "input": "f41c5a3b764f",
+    "png": "46867624e28d"
+  },
+  "chemical-equilibrium": {
+    "input": "c099db624486",
+    "png": "860466b9baea"
+  },
+  "chemistry": {
+    "input": "762f4b4c6030",
+    "png": "d664e568b8c8"
+  },
+  "default": {
+    "input": "4e67c8b8cdcd",
+    "png": "f21d08e64fbd"
+  },
+  "density-measurement": {
+    "input": "928612c738b6",
+    "png": "84272a6e4fa7"
+  },
+  "diels-alder-reaction": {
+    "input": "f14ba75b0dbe",
+    "png": "36cecaf8dc59"
+  },
+  "dilution": {
+    "input": "ede1b390a78d",
+    "png": "cb7762e3d143"
+  },
+  "dna-extraction": {
+    "input": "465a45de17a0",
+    "png": "983746416a22"
+  },
+  "electromagnetic-induction": {
+    "input": "e1132453ea8d",
+    "png": "8add38e99611"
+  },
+  "energy-conservation": {
+    "input": "4392deec4879",
+    "png": "512764b41ec7"
+  },
+  "exo-endo": {
+    "input": "abcef14bb45c",
+    "png": "17ec94f7e80c"
+  },
+  "flame-test": {
+    "input": "93f9a42a7dcb",
+    "png": "68fe89f8dd13"
+  },
+  "gc-ms-analysis": {
+    "input": "f376ac350b25",
+    "png": "7bc591be75e2"
+  },
+  "gel-electrophoresis": {
+    "input": "9250602efec9",
+    "png": "3a844c5fb5e1"
+  },
+  "heat-transfer": {
+    "input": "adbd57019662",
+    "png": "8a47752de14d"
+  },
+  "hookes-law": {
+    "input": "7dc970a9fef0",
+    "png": "8a0a7582e344"
+  },
+  "joules-experiment": {
+    "input": "3a29c50882e0",
+    "png": "a928fb0d13d8"
+  },
+  "logo": {
+    "input": "9711539556b2",
+    "png": "a06fa8d998f7"
+  },
+  "newtons-laws": {
+    "input": "a7a30d635cd5",
+    "png": "de9873238f8c"
+  },
+  "ohms-law": {
+    "input": "98281402a9ec",
+    "png": "5365d25283dc"
+  },
+  "pcr": {
+    "input": "ecf750b5f3e9",
+    "png": "803ddf368d30"
+  },
+  "pendulum": {
+    "input": "0db68363fe6e",
+    "png": "969b7bbc21f4"
+  },
+  "ph-indicators": {
+    "input": "9a25b530d55f",
+    "png": "3a18d9e5df33"
+  },
+  "physics": {
+    "input": "4c8e1fbda376",
+    "png": "b3632d3e8891"
+  },
+  "projectile-motion": {
+    "input": "951cf84ce927",
+    "png": "7c41c74f978a"
+  },
+  "rc-circuit-charging": {
+    "input": "a3b7fb8b98e9",
+    "png": "75dcaaa9f919"
+  },
+  "rc-circuit-discharging": {
+    "input": "f179d14779c6",
+    "png": "55ed6dac82a3"
+  },
+  "reaction-rate": {
+    "input": "dc97b8fae3e9",
+    "png": "03a0cdc38c76"
+  },
+  "refraction-reflection": {
+    "input": "c335693041f7",
+    "png": "8d433feab1ec"
+  },
+  "simple-harmonic-motion": {
+    "input": "c3395d14e8ad",
+    "png": "5aad13a25f30"
+  },
+  "solubility": {
+    "input": "20d9cfcabd76",
+    "png": "68ef30a45279"
+  },
+  "synthesis-of-aspirin": {
+    "input": "3c4d7709ef1d",
+    "png": "835afc9d8afa"
+  },
+  "titration": {
+    "input": "c52c3474ff89",
+    "png": "0c2c376fe298"
+  },
+  "weak-base-strong-acid-titration": {
+    "input": "36d31d2c8f5b",
+    "png": "02cb6b7341c6"
+  },
+  "zeeman-effect": {
+    "input": "3773feaa80cf",
+    "png": "51dbb78dd91c"
+  }
+}

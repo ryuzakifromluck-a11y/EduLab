@@ -1,0 +1,165 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: Install & cache
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+
+  lint:
+    name: Lint
+    needs: install
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: npm run lint
+
+  typecheck:
+    name: Typecheck
+    needs: install
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: npm run typecheck
+
+  test:
+    name: Test
+    needs: install
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # The accounts API tests also run against a real PostgreSQL.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: edulab_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/edulab_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: npm test
+      - name: Migrations apply cleanly
+        run: npm run migrate && npm run migrate -- --status
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/edulab_test
+      # Fails when a title, description or card design changed without `npm run og:images`.
+      - run: npm run og:check
+
+  build:
+    name: Build
+    needs: install
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: npm run build
+        env:
+          # Public origin for canonical, og:url, og:image and the sitemap
+          # (repository variable SITE_URL, e.g. https://edulab.uz).
+          VITE_SITE_URL: ${{ vars.SITE_URL }}
+      # Fetches every sitemap page the way Telegram/Discord do and checks its preview tags and image.
+      - run: npm run seo:check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          if-no-files-found: error
+          retention-days: 7
+
+  deploy:
+    name: Deploy to Vercel
+    needs: [lint, typecheck, test, build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # One production deploy at a time; a newer push waits instead of racing.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.url }}
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_CLI: vercel@64.4.0
+      SITE_URL: ${{ vars.SITE_URL }}
+    steps:
+      - id: secrets
+        run: |
+          if [ -n "$VERCEL_TOKEN" ] && [ -n "$VERCEL_ORG_ID" ] && [ -n "$VERCEL_PROJECT_ID" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Skipping deploy: set the VERCEL_TOKEN, VERCEL_ORG_ID and VERCEL_PROJECT_ID repository secrets to enable it."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -z "$SITE_URL" ]; then
+            echo "::warning::The SITE_URL repository variable is not set, so this build's link previews and sitemap point at http://localhost:4173. Set it to the public URL (e.g. https://edulab.uz)."
+          fi
+
+      - if: steps.secrets.outputs.ready == 'true'
+        uses: actions/checkout@v4
+
+      - if: steps.secrets.outputs.ready == 'true'
+        uses: ./.github/actions/setup
+
+      # `vercel build` produces the Build Output the same way Vercel's own builders do:
+      # the static site, the vercel.json headers/rewrites AND the api/ Functions
+      # (/api/tutor, /api/errors, /api/health). Shipping dist/ alone would drop all three.
+      # vercel.json (cleanUrls + headers, kept in sync with public/_headers) serves each
+      # prerendered page at its clean URL so link previews get that page's tags.
+      - name: Build with Vercel
+        if: steps.secrets.outputs.ready == 'true'
+        run: |
+          npm install --global "$VERCEL_CLI"
+          vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          VITE_SITE_URL="$SITE_URL" VITE_RELEASE="${GITHUB_SHA::7}" vercel build --prod --token="$VERCEL_TOKEN"
+
+      - id: deploy
+        name: Deploy
+        if: steps.secrets.outputs.ready == 'true'
+        run: |
+          url=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Deployed ${GITHUB_SHA::7} to $url" >> "$GITHUB_STEP_SUMMARY"
+
+      # Checks the live site after the deploy: pages, prerendered SEO tags, service worker
+      # headers, and that every API function answers. Uses the PRODUCTION_URL repository
+      # variable when set (the unique deployment URL may sit behind Deployment Protection).
+      - name: Smoke test
+        if: steps.secrets.outputs.ready == 'true'
+        env:
+          SITE: ${{ vars.PRODUCTION_URL || steps.deploy.outputs.url }}
+          API: ${{ vars.API_URL }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: node scripts/smoke.mjs "$SITE" ${API:+--api "$API"} --retries 5
