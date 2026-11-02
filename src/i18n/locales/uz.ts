@@ -410,6 +410,7 @@ const uz = {
     record: 'Yozish',
     clearReadings: 'Oʻlchovlarni tozalash',
     view2d: '{{name}} (2D koʻrinish)',
+    sound: { label: 'Ovoz', mute: 'Ovoz effektlarini oʻchirish', unmute: 'Ovoz effektlarini yoqish' },
   },
   quiz: {
     title: 'Bilimni tekshirish',

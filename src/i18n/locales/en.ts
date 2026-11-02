@@ -407,6 +407,7 @@ const en = {
     record: 'Record',
     clearReadings: 'Clear readings',
     view2d: '{{name}} (2D view)',
+    sound: { label: 'Sound', mute: 'Mute sound effects', unmute: 'Turn sound effects on' },
   },
   quiz: {
     title: 'Knowledge check',
