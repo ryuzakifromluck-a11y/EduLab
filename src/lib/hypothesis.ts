@@ -47,6 +47,8 @@ export interface HypothesisOutcome {
   labelKey: string
   unit: string
   digits: number
+  /** Relative change below which this value counts as "stayed the same" (default `SAME_TOLERANCE`). */
+  tolerance?: number
 }
 
 /** Per-experiment description used to test hypotheses. `evaluate` must be pure. */
@@ -213,7 +215,7 @@ export function compareHypothesis(
   const outcomes: OutcomeChange[] = spec.outcomes.map((o) => {
     const a = finiteOrNull(before[o.id])
     const b = finiteOrNull(after[o.id])
-    return { id: o.id, from: a, to: b, direction: directionOf(a, b) }
+    return { id: o.id, from: a, to: b, direction: directionOf(a, b, o.tolerance) }
   })
 
   const main = outcomes.find((o) => o.id === draft.outcome)

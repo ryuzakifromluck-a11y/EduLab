@@ -135,7 +135,7 @@ jobs:
 
       # `vercel build` produces the Build Output the same way Vercel's own builders do:
       # the static site, the vercel.json headers/rewrites AND the api/ Functions
-      # (/api/tutor, /api/errors, /api/health). Shipping dist/ alone would drop all three.
+      # (/api/tutor, /api/errors, /api/health, /api/analytics/*). Shipping dist/ alone would drop them all.
       # vercel.json (cleanUrls + headers, kept in sync with public/_headers) serves each
       # prerendered page at its clean URL so link previews get that page's tags.
       - name: Build with Vercel

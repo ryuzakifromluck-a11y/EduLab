@@ -13,5 +13,5 @@
     "noEmit": true,
     "strict": true
   },
-  "include": ["vite.config.ts", "vitest.config.ts", "sw.plugin.ts", "sw.plugin.test.ts", "seo.plugin.ts", "security.plugin.ts", "server/tutor", "server/monitoring", "api"]
+  "include": ["vite.config.ts", "vitest.config.ts", "sw.plugin.ts", "sw.plugin.test.ts", "seo.plugin.ts", "security.plugin.ts", "server/tutor", "server/monitoring", "server/analytics", "api"]
 }

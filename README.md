@@ -139,7 +139,29 @@ Opening an experiment page counts one session. Visits are counted in `localStora
 
 `npm run api` starts the analytics server on http://localhost:8788/api/analytics next to the accounts API, and `npm run dev` proxies `/api/analytics` to it. To run it on its own: `npm run analytics:server`.
 
-`VITE_ANALYTICS_URL` defaults to `/api/analytics` (same origin). Set it to `off` to keep demo data only. The server reads `ANALYTICS_PORT` (default 8788), `ANALYTICS_DATA` (JSON file), `ALLOWED_ORIGIN` (comma-separated exact origins for CORS; unset means same-origin only) and `ANALYTICS_RATE_LIMIT_PER_MINUTE` (event posts per address, default 30). A passed knowledge check counts as a completed session (once per experiment per page load).
+`VITE_ANALYTICS_URL` defaults to `/api/analytics` (same origin). Set it to `off` to keep demo data only. The local server reads `ANALYTICS_PORT` (default 8788), `ANALYTICS_DATA` (JSON file), `ALLOWED_ORIGIN` (comma-separated exact origins for CORS; unset means same-origin only) and `ANALYTICS_RATE_LIMIT_PER_MINUTE` (event posts per address, default 30). A passed knowledge check counts as a completed session (once per experiment per page load).
+
+### Analytics on Vercel (production)
+
+On Vercel, `/api/analytics/impact` and `/api/analytics/events` are Vercel Functions (`api/analytics/*`, logic in `server/analytics/`) that keep the counters in the same PostgreSQL as the accounts API, in one table, `analytics_counters` (migration `003_analytics.sql`). Events are folded into counters per experiment, subject and month before they are written; no IP address, user agent, identifier or exact time is stored (the client address is only used in memory to rate limit posts). The stats response is cached on Vercel's CDN for 60 seconds, so page views do not each query the database.
+
+Without a database, or when it is unreachable, both endpoints answer `503` and the site shows the labelled demo data; browsers keep their events queued and send them once the API works. `GET /api/health` reports `analyticsConfigured`, and the post-deploy smoke test checks `/api/analytics/impact`.
+
+One-time setup:
+
+1. **Create the table.** From your machine, run the migrations against the production database (safe to repeat; it only applies what is missing):
+   `DATABASE_URL='postgres://…' npm run migrate`
+2. **Set the connection string in Vercel.** Project → Settings → Environment Variables → add `DATABASE_URL` for *Production* (and *Preview* if you want previews to record too). With Supabase, use the **Transaction pooler** connection string (port `6543`, Project Settings → Database → Connection string) with `?sslmode=require`, because each function instance opens its own connections.
+3. **Redeploy** (push to `main`, or Deployments → Redeploy), then open `https://<your-site>/api/analytics/impact`: it should return JSON with `totalSessions`, and the Global Impact page loses the *Demo data* label.
+
+| Variable | Where | Purpose |
+| --- | --- | --- |
+| `DATABASE_URL` | Vercel (required) | PostgreSQL connection string; the `DB_*` variables work too. |
+| `DB_POOL_MAX` | Vercel (optional) | Connections per function instance, default `3`. |
+| `ANALYTICS_RATE_LIMIT_PER_MINUTE` | Vercel (optional) | Event posts per client address per minute and instance, default `30`. |
+| `ALLOWED_ORIGIN` | Vercel (optional) | Comma-separated exact origins that may call the API cross-origin. Not needed when the site and API share the Vercel domain. |
+
+If the smoke test or `/api/analytics/impact` reports `unavailable`, check the function logs (Vercel → Logs, filter `[analytics]`): usually the migration was not run, or the connection string is wrong. A `self-signed certificate in certificate chain` error with a pooler URL is fixed by using `?sslmode=no-verify`, or `?sslmode=require&uselibpqcompat=true`.
 
 ## SEO and link previews
 
@@ -219,7 +241,8 @@ api/errors.ts, api/health.ts  Vercel Functions for error reports and health
 scripts/smoke.mjs   Post-deploy / uptime smoke test; scripts/deploy.sh manual deploy
   services/analytics.ts  Analytics provider: API stats with demo fallback
   services/usageTracker.ts  Local, anonymous visit counter and offline event queue
-server/analytics-server.mjs  Reference analytics API (zero dependencies)
+server/analytics-server.mjs  Local analytics API for `npm run api` (zero dependencies)
+server/analytics/        Analytics validation, aggregation and Postgres store (Vercel Functions in api/analytics/)
   i18n/locales/     en.ts is the source; uz.ts and ru.ts are type-checked against it
   i18n/locales/     en.ts is the source; uz.ts and ru.ts are type-checked and tested against it
 ```
