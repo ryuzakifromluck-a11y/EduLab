@@ -390,7 +390,11 @@ export default function DensityMeasurementExperiment() {
   return (
     <ExperimentShell
       experiment={experiment}
-      progressSettings={solidMode ? { mode: d.mode, sample: d.solidId, method: d.volumeMethod } : { mode: d.mode, liquid: d.liquidId, method: d.liquidMethod }}
+      progressSettings={
+        solidMode
+          ? { mode: d.mode, sample: d.solidId, method: d.volumeMethod, temperature: d.temperature }
+          : { mode: d.mode, liquid: d.liquidId, method: d.liquidMethod, temperature: d.temperature }
+      }
       viewport={viewport}
       controls={controls}
       presenterControls={presenterControls}
