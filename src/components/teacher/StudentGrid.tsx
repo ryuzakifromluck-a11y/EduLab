@@ -1,7 +1,7 @@
-import { Pause, Play, UsersRound } from 'lucide-react'
+import { Crown, Pause, Play, UsersRound } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { clsx } from 'clsx'
-import type { PublicStudent, RemoteReading } from '../../lib/remoteCode'
+import type { PublicStudent, RemoteReading, RoomSummary } from '../../lib/remoteCode'
 import { SubjectBadge } from '../ui/badges'
 
 const reading = (r: RemoteReading) => `${r.value}${r.unit ? ` ${r.unit}` : ''}`
@@ -26,8 +26,9 @@ function ReadingList({ items, title }: { items: RemoteReading[]; title: string }
 }
 
 /** One small card per student with what they have open and their live values. */
-export function StudentGrid({ students, now }: { students: PublicStudent[]; now: number }) {
+export function StudentGrid({ students, rooms = [], now }: { students: PublicStudent[]; rooms?: RoomSummary[]; now: number }) {
   const { t } = useTranslation()
+  const controllers = new Set(rooms.flatMap((r) => (r.controllerId ? [r.controllerId] : [])))
   if (!students.length) {
     return (
       <div className="flex min-h-56 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-line p-8 text-center">
@@ -55,6 +56,12 @@ export function StudentGrid({ students, now }: { students: PublicStudent[]; now:
               </p>
               <span className="tabular shrink-0 text-xs text-faint">{s.online ? t('remote.teacher.secondsAgo', { count: ago }) : t('remote.teacher.offline')}</span>
             </div>
+            {s.roomCode && (
+              <p className="inline-flex items-center gap-1.5 self-start rounded-full bg-surface-2 px-2 py-0.5 text-xs text-muted">
+                {controllers.has(s.id) && <Crown className="h-3 w-3 text-brand" aria-hidden />}
+                {controllers.has(s.id) ? t('remote.teacher.roomController', { code: s.roomCode }) : t('remote.teacher.roomMember', { code: s.roomCode })}
+              </p>
+            )}
             {experimentId && subject ? (
               <>
                 <div className="flex flex-wrap items-center gap-2">

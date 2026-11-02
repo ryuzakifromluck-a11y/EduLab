@@ -2,13 +2,24 @@ import { randomBytes, randomUUID, timingSafeEqual } from 'node:crypto'
 import {
   CODE_ALPHABET,
   CODE_LENGTH,
+  ROOM_CODE_LENGTH,
   isValidCode,
+  isValidRoomCode,
   normalizeCode,
+  type ClassControl,
+  type HeartbeatResult,
   type PublicStudent,
   type RemoteReading,
+  type RemoteSubject,
+  type RoomAction,
+  type RoomSummary,
+  type RoomView,
   type SessionSummary,
+  type SharedState,
   type StudentState,
 } from '../src/lib/remoteCode.ts'
+import { sanitizeSettings } from '../src/lib/progressModel.ts'
+import { EXPERIMENTS } from '../src/data/experiments.ts'
 
 export { CODE_ALPHABET, CODE_LENGTH, codeFromScan, formatCode, isValidCode, normalizeCode } from '../src/lib/remoteCode.ts'
 
@@ -17,6 +28,12 @@ export { CODE_ALPHABET, CODE_LENGTH, codeFromScan, formatCode, isValidCode, norm
  * (shown as a QR code); students join with the code and push the state of the
  * experiment they have open every couple of seconds; the teacher polls the
  * session to see everyone at once.
+ *
+ * The teacher can also steer the class: send one experiment to everyone
+ * (students may stay where they are) and lock every screen while they talk.
+ * Students can form small rooms inside the session: one member, the
+ * controller, moves the shared parameters and the others follow. Both ride the
+ * existing heartbeat, so this needs no WebSocket server.
  *
  * Sessions are short-lived (30 minutes) and deliberately kept in memory: they
  * hold no personal data beyond a display name, and a restart simply ends the
@@ -33,6 +50,19 @@ const MAX_READINGS = 16
 const MAX_TEXT = 64
 const EXPERIMENT_ID = /^[a-z0-9-]{1,64}$/
 const SUBJECTS = ['physics', 'chemistry', 'biology'] as const
+export const MAX_ROOMS = 30
+export const MAX_ROOM_MEMBERS = 6
+/** Experiments a teacher may send to the class: only ones that exist and are open. */
+const PUSHABLE = new Map(EXPERIMENTS.filter((e) => e.status === 'available').map((e) => [e.id, e.subject as RemoteSubject]))
+
+interface RoomRow {
+  code: string
+  controllerId: string | null
+  /** Insertion order is join order: when the controller leaves, the longest-standing member takes over. */
+  members: Set<string>
+  requests: Set<string>
+  shared: SharedState
+}
 
 interface StudentRow {
   id: string
@@ -41,6 +71,7 @@ interface StudentRow {
   joinedAt: number
   lastSeen: number
   state: StudentState
+  roomCode: string | null
 }
 
 interface SessionRow {
@@ -49,6 +80,9 @@ interface SessionRow {
   createdAt: number
   expiresAt: number
   students: Map<string, StudentRow>
+  control: ClassControl
+  pushSeq: number
+  rooms: Map<string, RoomRow>
 }
 
 export class RemoteError extends Error {
@@ -100,6 +134,13 @@ const sameSecret = (a: string, b: string) => {
 }
 
 const emptyState = (now: number): StudentState => ({ experimentId: null, subject: null, params: [], readings: [], running: false, updatedAt: now })
+const emptyShared = (now: number): SharedState => ({ experimentId: null, subject: null, settings: {}, params: [], readings: [], running: false, version: 0, updatedAt: now })
+
+export function generateRoomCode(random?: (n: number) => Uint8Array): string {
+  return generateCode(random).slice(0, ROOM_CODE_LENGTH)
+}
+
+const ROOM_ACTIONS: readonly RoomAction[] = ['create', 'join', 'leave', 'handover', 'request', 'claim']
 
 export function createRemoteRegistry({ now = () => Date.now(), ttl = SESSION_TTL_MS } = {}) {
   const sessions = new Map<string, SessionRow>()
@@ -127,6 +168,36 @@ export function createRemoteRegistry({ now = () => Date.now(), ttl = SESSION_TTL
   }
 
   const summary = (s: SessionRow): SessionSummary => ({ code: s.code, createdAt: s.createdAt, expiresAt: s.expiresAt, studentCount: s.students.size })
+  const isOnline = (row: StudentRow | undefined) => !!row && now() - row.lastSeen < STUDENT_STALE_MS
+
+  function teacherOf(code: string, teacherKey: string): SessionRow {
+    const s = get(code)
+    if (!sameSecret(s.teacherKey, teacherKey)) throw new RemoteError(403, 'notTeacher')
+    return s
+  }
+
+  /** Takes a student out of their room; hands control on, and drops the room once it is empty. */
+  function leaveRoom(s: SessionRow, row: StudentRow) {
+    const room = row.roomCode ? s.rooms.get(row.roomCode) : undefined
+    row.roomCode = null
+    if (!room) return
+    room.members.delete(row.id)
+    room.requests.delete(row.id)
+    if (!room.members.size) s.rooms.delete(room.code)
+    else if (room.controllerId === row.id) room.controllerId = room.members.values().next().value ?? null
+  }
+
+  function roomView(s: SessionRow, row: StudentRow): RoomView | null {
+    const room = row.roomCode ? s.rooms.get(row.roomCode) : undefined
+    if (!room) return null
+    const members = [...room.members].flatMap((id) => {
+      const m = s.students.get(id)
+      return m ? [{ id, name: m.name, online: isOnline(m) }] : []
+    })
+    return { code: room.code, controllerId: room.controllerId, members, requests: [...room.requests], shared: room.shared }
+  }
+
+  const controlOf = (s: SessionRow): ClassControl => ({ push: s.control.push, locked: s.control.locked })
 
   return {
     /** Opens a session. The teacher key is returned once and is needed to watch the class. */
@@ -136,7 +207,16 @@ export function createRemoteRegistry({ now = () => Date.now(), ttl = SESSION_TTL
       let code = generateCode()
       while (sessions.has(code)) code = generateCode()
       const t = now()
-      const row: SessionRow = { code, teacherKey: randomBytes(24).toString('base64url'), createdAt: t, expiresAt: t + ttl, students: new Map() }
+      const row: SessionRow = {
+        code,
+        teacherKey: randomBytes(24).toString('base64url'),
+        createdAt: t,
+        expiresAt: t + ttl,
+        students: new Map(),
+        control: { push: null, locked: false },
+        pushSeq: 0,
+        rooms: new Map(),
+      }
       sessions.set(code, row)
       return { ...summary(row), teacherKey: row.teacherKey }
     },
@@ -146,15 +226,37 @@ export function createRemoteRegistry({ now = () => Date.now(), ttl = SESSION_TTL
       return summary(get(code))
     },
 
-    /** The teacher's view: every student and their latest state. */
-    watch(code: string, teacherKey: string): SessionSummary & { students: PublicStudent[] } {
-      const s = get(code)
-      if (!sameSecret(s.teacherKey, teacherKey)) throw new RemoteError(403, 'notTeacher')
+    /** The teacher's view: every student and their latest state, the class controls and the rooms. */
+    watch(code: string, teacherKey: string): SessionSummary & { students: PublicStudent[]; control: ClassControl; rooms: RoomSummary[] } {
+      const s = teacherOf(code, teacherKey)
       const t = now()
       const students = [...s.students.values()]
         .sort((a, b) => a.joinedAt - b.joinedAt)
-        .map(({ id, name, joinedAt, lastSeen, state }) => ({ id, name, joinedAt, lastSeen, online: t - lastSeen < STUDENT_STALE_MS, state }))
-      return { ...summary(s), students }
+        .map(({ id, name, joinedAt, lastSeen, state, roomCode }) => ({ id, name, joinedAt, lastSeen, online: t - lastSeen < STUDENT_STALE_MS, state, roomCode }))
+      const rooms = [...s.rooms.values()].map((r) => ({ code: r.code, controllerId: r.controllerId, memberIds: [...r.members] }))
+      return { ...summary(s), students, control: controlOf(s), rooms }
+    },
+
+    /**
+     * The teacher steers the class. `push`: an experiment id sends it to everyone, null withdraws it;
+     * `locked`: true freezes every student's screen until it is false again. Missing fields stay as they are.
+     */
+    control(code: string, teacherKey: string, body: Record<string, unknown>): ClassControl {
+      const s = teacherOf(code, teacherKey)
+      if ('push' in body) {
+        if (body.push === null) s.control.push = null
+        else {
+          const id = typeof body.push === 'string' ? body.push : ''
+          const subject = PUSHABLE.get(id)
+          if (!subject) throw new RemoteError(400, 'invalidExperiment')
+          s.control.push = { experimentId: id, subject, seq: ++s.pushSeq, at: now() }
+        }
+      }
+      if ('locked' in body) {
+        if (typeof body.locked !== 'boolean') throw new RemoteError(400, 'invalidControl')
+        s.control.locked = body.locked
+      }
+      return controlOf(s)
     },
 
     join(code: string, rawName: unknown) {
@@ -163,13 +265,17 @@ export function createRemoteRegistry({ now = () => Date.now(), ttl = SESSION_TTL
       if (!name) throw new RemoteError(400, 'nameRequired')
       if (s.students.size >= MAX_STUDENTS) throw new RemoteError(409, 'sessionFull')
       const t = now()
-      const row: StudentRow = { id: randomUUID(), key: randomBytes(18).toString('base64url'), name, joinedAt: t, lastSeen: t, state: emptyState(t) }
+      const row: StudentRow = { id: randomUUID(), key: randomBytes(18).toString('base64url'), name, joinedAt: t, lastSeen: t, state: emptyState(t), roomCode: null }
       s.students.set(row.id, row)
       return { studentId: row.id, studentKey: row.key, name, ...summary(s) }
     },
 
-    /** A student's heartbeat; carries the experiment they have open, if any. */
-    report(code: string, body: Record<string, unknown>) {
+    /**
+     * A student's heartbeat; carries the experiment they have open, if any. A room's controller
+     * also sends `settings`, which become the room's shared state. The answer carries the
+     * teacher's controls and the student's room, so students need no second channel.
+     */
+    report(code: string, body: Record<string, unknown>): HeartbeatResult {
       const s = get(code)
       const row = student(s, body.studentId, body.studentKey)
       const t = now()
@@ -184,19 +290,92 @@ export function createRemoteRegistry({ now = () => Date.now(), ttl = SESSION_TTL
         running: experimentId ? body.running === true : false,
         updatedAt: t,
       }
-      return { ok: true as const, expiresAt: s.expiresAt }
+      const room = row.roomCode ? s.rooms.get(row.roomCode) : undefined
+      // Only the controller writes the shared state, and nobody does while the teacher has the class locked.
+      if (room && room.controllerId === row.id && !s.control.locked && 'settings' in body) {
+        const { experimentId: id, subject: sub, params, readings, running } = row.state
+        const settings = id ? sanitizeSettings(body.settings) : {}
+        const prev = room.shared
+        const changed = JSON.stringify([prev.experimentId, prev.settings, prev.params, prev.readings, prev.running]) !== JSON.stringify([id, settings, params, readings, running])
+        if (changed) room.shared = { experimentId: id, subject: sub, settings, params, readings, running, version: prev.version + 1, updatedAt: t }
+      }
+      return { ok: true as const, expiresAt: s.expiresAt, control: controlOf(s), room: roomView(s, row) }
+    },
+
+    /**
+     * Shared rooms inside a session. Who controls:
+     *  - whoever creates a room controls it;
+     *  - the controller can hand control to any member (`handover`), and members can ask for it (`request`);
+     *  - if the controller goes offline any member may take over (`claim`); if they leave, the longest-standing member does;
+     *  - while the teacher has the class locked, nothing in a room changes.
+     */
+    room(code: string, body: Record<string, unknown>): RoomView | null {
+      const s = get(code)
+      const row = student(s, body.studentId, body.studentKey)
+      const action = ROOM_ACTIONS.find((a) => a === body.action)
+      if (!action) throw new RemoteError(400, 'invalidRoomAction')
+      if (s.control.locked && action !== 'leave') throw new RemoteError(423, 'classLocked')
+      const current = row.roomCode ? s.rooms.get(row.roomCode) : undefined
+      const t = now()
+      switch (action) {
+        case 'create': {
+          leaveRoom(s, row)
+          if (s.rooms.size >= MAX_ROOMS) throw new RemoteError(409, 'tooManyRooms')
+          let roomCode = generateRoomCode()
+          while (s.rooms.has(roomCode)) roomCode = generateRoomCode()
+          s.rooms.set(roomCode, { code: roomCode, controllerId: row.id, members: new Set([row.id]), requests: new Set(), shared: emptyShared(t) })
+          row.roomCode = roomCode
+          break
+        }
+        case 'join': {
+          const roomCode = normalizeCode(typeof body.roomCode === 'string' ? body.roomCode : '')
+          if (!isValidRoomCode(roomCode)) throw new RemoteError(400, 'invalidRoomCode')
+          const room = s.rooms.get(roomCode)
+          if (!room) throw new RemoteError(404, 'roomNotFound')
+          if (room === current) break
+          if (room.members.size >= MAX_ROOM_MEMBERS) throw new RemoteError(409, 'roomFull')
+          leaveRoom(s, row)
+          room.members.add(row.id)
+          row.roomCode = roomCode
+          break
+        }
+        case 'leave':
+          leaveRoom(s, row)
+          break
+        case 'handover': {
+          if (!current || current.controllerId !== row.id) throw new RemoteError(403, 'notController')
+          const to = typeof body.to === 'string' ? body.to : ''
+          if (!current.members.has(to)) throw new RemoteError(400, 'notInRoom')
+          current.controllerId = to
+          current.requests.delete(to)
+          break
+        }
+        case 'request':
+          if (!current) throw new RemoteError(409, 'notInRoom')
+          if (current.controllerId !== row.id) current.requests.add(row.id)
+          break
+        case 'claim': {
+          if (!current) throw new RemoteError(409, 'notInRoom')
+          const holder = current.controllerId ? s.students.get(current.controllerId) : undefined
+          if (current.controllerId !== row.id && isOnline(holder)) throw new RemoteError(409, 'controllerOnline')
+          current.controllerId = row.id
+          current.requests.delete(row.id)
+          break
+        }
+      }
+      return roomView(s, row)
     },
 
     leave(code: string, body: Record<string, unknown>) {
       const s = get(code)
       const row = student(s, body.studentId, body.studentKey)
+      leaveRoom(s, row)
       s.students.delete(row.id)
       return { ok: true as const }
     },
 
     close(code: string, teacherKey: string) {
-      const s = get(code)
-      if (!sameSecret(s.teacherKey, teacherKey)) throw new RemoteError(403, 'notTeacher')
+      const s = teacherOf(code, teacherKey)
       sessions.delete(s.code)
       return { ok: true as const }
     },

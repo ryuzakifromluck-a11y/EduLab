@@ -16,6 +16,7 @@ import { CHART_MARGIN, OverlayNote, RecordBox, axisLabels } from '../shared/lab'
 import { MASS_MAX, MASS_STEP, useHookesLaw } from './useHookesLaw'
 import { HookesLawScene } from './HookesLawScene'
 import { HookesLaw2D } from './HookesLaw2D'
+import { applySharedSettings, choice, num } from '../../lib/sharedSettings'
 
 const P = 'exp.hookes-law'
 const F_CHART = 10
@@ -261,6 +262,12 @@ export default function HookesLawExperiment() {
   return (
     <ExperimentShell
       experiment={experiment}
+      applySettings={(s) =>
+        applySharedSettings(s, {
+          spring: choice(h.springId, SPRINGS.map((x) => x.id), h.chooseSpring),
+          mass: num(h.massG, 0, MASS_MAX, h.setMass),
+        })
+      }
       progressSettings={{ spring: h.springId, mass: h.massG }}
       viewport={viewport}
       controls={controls}

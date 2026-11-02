@@ -14,6 +14,7 @@ import { CHART_MARGIN, OverlayNote, axisLabels } from '../shared/lab'
 import { A_MAX, K_MAX, K_MIN, M_MAX, M_MIN, SPEEDS, useHarmonicMotion } from './useHarmonicMotion'
 import { HarmonicMotionScene } from './HarmonicMotionScene'
 import { HarmonicMotion2D } from './HarmonicMotion2D'
+import { applySharedSettings, num } from '../../lib/sharedSettings'
 
 const P = 'exp.simple-harmonic-motion'
 
@@ -242,6 +243,15 @@ export default function HarmonicMotionExperiment() {
   return (
     <ExperimentShell
       experiment={experiment}
+      applySettings={(s) =>
+        applySharedSettings(s, {
+          mass: num(mass, M_MIN, M_MAX, h.setMass),
+          k: num(k, K_MIN, K_MAX, h.setK),
+          amplitude: num(amplitude, 0.02, A_MAX, h.setAmplitude),
+          damping: num(damping, 0, 0.3, h.setDamping),
+          phaseDeg: num(phaseDeg, 0, 360, h.setPhase),
+        })
+      }
       progressSettings={{ mass, k, amplitude, damping, phaseDeg }}
       viewport={viewport}
       controls={controls}

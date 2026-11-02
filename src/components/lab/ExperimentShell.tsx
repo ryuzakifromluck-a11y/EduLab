@@ -14,6 +14,8 @@ import { MeasurementGrid, Panel, type Measurement } from './controls'
 import { AIAssistant } from '../ai/AIAssistant'
 import { useHypothesisStage } from '../hypothesis/useHypothesisStage'
 import { LiveSessionBadge, RemoteBroadcast } from '../student/RemoteBroadcast'
+import { RoomBar } from '../student/RoomPanel'
+import { useRoomFollow } from '../student/useRoomFollow'
 import type { TutorReading } from '../../../server/tutor/types'
 import { clsx } from 'clsx'
 
@@ -54,6 +56,12 @@ interface Props {
   onComplete?: () => void
   /** Current parameter values shared with the AI tutor as context. */
   tutorParams?: TutorReading[]
+  /**
+   * Sets the experiment's parameters from `progressSettings`-shaped values. With it, students
+   * in a shared room follow the controller's sliders; values may be missing or out of range,
+   * so check each one. Without it, roommates see the controller's values but keep their own.
+   */
+  applySettings?: (settings: ProgressSettings) => void
 }
 
 export function ExperimentShell(props: Props) {
@@ -83,7 +91,13 @@ export function ExperimentShell(props: Props) {
   return (
     <>
       {/* Publishes live state to a teacher's QR Remote Control session, if the student joined one. */}
-      <RemoteBroadcast experiment={props.experiment} params={props.tutorParams} measurements={props.measurements} running={props.keys.running} />
+      <RemoteBroadcast
+        experiment={props.experiment}
+        params={props.tutorParams}
+        measurements={props.measurements}
+        running={props.keys.running}
+        settings={props.progressSettings}
+      />
       {presenting ? (
         <PresentationMode {...props} onExit={() => setPresenting(false)} />
       ) : (
@@ -118,11 +132,14 @@ function StandardLayout({
   score,
   onComplete,
   tutorParams,
+  applySettings,
   onPresent,
   presentButton,
 }: Props & { onPresent: () => void; presentButton: RefObject<HTMLButtonElement | null> }) {
   const { t } = useTranslation()
   const hypothesis = useHypothesisStage(e, progressSettings)
+  const { following } = useRoomFollow(e, applySettings)
+  const roomStatusId = useId()
   return (
     <Container className="py-6 sm:py-8">
       {hypothesis.dialog}
@@ -165,13 +182,19 @@ function StandardLayout({
         </Button>
       </div>
 
+      <div className="mt-5 empty:hidden">
+        <RoomBar experiment={e} following={following} statusId={roomStatusId} />
+      </div>
       {hypothesis.banner && <div className="mt-5">{hypothesis.banner}</div>}
       {notice && <div className="mt-5">{notice}</div>}
 
       <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
         {viewport(false)}
         <Panel title={t('lab.parameters')} icon={<SlidersHorizontal className="h-4 w-4" />} bodyClassName="flex flex-col gap-5">
-          {controls}
+          {/* In a shared room, only the controller moves the sliders; everyone else follows. */}
+          <fieldset disabled={following} aria-describedby={following ? roomStatusId : undefined} className="contents">
+            {controls}
+          </fieldset>
         </Panel>
       </div>
 

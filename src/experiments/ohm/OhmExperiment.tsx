@@ -16,6 +16,7 @@ import { R_MAX, R_MIN, V_MAX, useOhm } from './useOhm'
 import { OhmScene } from './OhmScene'
 import { Circuit2D } from './Circuit2D'
 import { clsx } from 'clsx'
+import { applySharedSettings, num } from '../../lib/sharedSettings'
 
 export default function OhmExperiment() {
   const { t } = useTranslation()
@@ -275,6 +276,7 @@ export default function OhmExperiment() {
   return (
     <ExperimentShell
       experiment={experiment}
+      applySettings={(s) => applySharedSettings(s, { voltage: num(o.voltage, 0, V_MAX, o.setVoltage), resistance: num(o.resistance, R_MIN, R_MAX, o.setResistance) })}
       progressSettings={{ voltage: o.voltage, resistance: o.resistance }}
       viewport={viewport}
       controls={controls}

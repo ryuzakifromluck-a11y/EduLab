@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { codeFromScan, formatCode, isValidCode, joinUrl, normalizeCode } from './remoteCode'
+import { codeFromScan, formatCode, isValidCode, isValidRoomCode, joinUrl, normalizeCode } from './remoteCode'
 import { toRemoteReadings } from './remoteReport'
 
 describe('codeFromScan', () => {
@@ -39,5 +39,14 @@ describe('toRemoteReadings', () => {
     expect(out).toHaveLength(4)
     expect(out[0]).toEqual({ label: 'Period', value: '2.006', unit: 's' })
     expect(out[1]).toEqual({ label: 'm0', value: '0' })
+  })
+})
+
+describe('isValidRoomCode', () => {
+  it('accepts 4 characters from the session-code alphabet', () => {
+    expect(isValidRoomCode('AB23')).toBe(true)
+    expect(isValidRoomCode('AB2')).toBe(false)
+    expect(isValidRoomCode('AB10')).toBe(false)
+    expect(isValidRoomCode('ab23')).toBe(false)
   })
 })

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { clsx } from 'clsx'
 import type { Experiment } from '../../data/experiments'
+import type { ProgressSettings } from '../../lib/progressModel'
 import { formatCode } from '../../lib/remoteCode'
 import { toRemoteReadings } from '../../lib/remoteReport'
 import { IDLE_REPORT, useRemoteSession } from '../../store/remoteSession'
@@ -24,11 +25,14 @@ export function RemoteBroadcast({
   params,
   measurements,
   running,
+  settings,
 }: {
   experiment: Experiment
   params?: readonly ReadingLike[]
   measurements: readonly ReadingLike[]
   running?: boolean
+  /** The experiment's raw parameters; a room's controller shares them with roommates. */
+  settings?: ProgressSettings
 }) {
   const ticket = useRemoteSession((s) => s.ticket)
   const setReport = useRemoteSession((s) => s.setReport)
@@ -37,10 +41,10 @@ export function RemoteBroadcast({
   const active = !!ticket
   const p = toRemoteReadings(params)
   const r = toRemoteReadings(measurements, 6)
-  const key = active ? JSON.stringify([experiment.id, p, r, !!running]) : ''
+  const key = active ? JSON.stringify([experiment.id, p, r, !!running, settings ?? {}]) : ''
   useEffect(() => {
     if (!active) return
-    setReport({ experimentId: experiment.id, subject: experiment.subject, params: p, readings: r, running: !!running })
+    setReport({ experimentId: experiment.id, subject: experiment.subject, params: p, readings: r, running: !!running, settings: settings ?? {} })
     // `key` captures every value used above.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key])

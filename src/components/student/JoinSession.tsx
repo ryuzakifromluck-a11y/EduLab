@@ -10,6 +10,7 @@ import { useAuth } from '../../store/auth'
 import { useRemoteSession } from '../../store/remoteSession'
 import { SubjectBadge } from '../ui/badges'
 import { Button, Card } from '../ui/primitives'
+import { RoomPanel } from './RoomPanel'
 
 const NAME_KEY = 'edulab-remote-name'
 
@@ -46,6 +47,7 @@ export function ConnectedView() {
           {t('remote.student.leave')}
         </Button>
       </Card>
+      <RoomPanel />
       <section aria-labelledby="remote-pick-heading">
         <h2 id="remote-pick-heading" className="text-base font-semibold text-ink">
           {t('remote.student.pick')}

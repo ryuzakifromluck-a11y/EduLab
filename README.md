@@ -122,6 +122,16 @@ Served by the same accounts API (`npm run api`), no extra configuration. Session
 | `PUT /api/remote/session/:code/state` | student | Body `{ studentId, studentKey, experimentId, subject, params, readings, running }`. |
 | `POST /api/remote/session/:code/leave` | student | Leaves the session. |
 | `DELETE /api/remote/session/:code` | teacher | Ends the session (header `X-Teacher-Key`). |
+| `POST /api/remote/session/:code/control` | teacher | Body `{ push?: experimentId \| null, locked?: boolean }` (header `X-Teacher-Key`). |
+| `POST /api/remote/session/:code/room` | student | Body `{ studentId, studentKey, action, roomCode?, to? }`; `action` is `create`, `join`, `leave`, `handover`, `request` or `claim`. |
+
+#### Teacher control and shared rooms
+
+- **Send to everyone.** The teacher picks an experiment under *Class controls*. Each student gets a prompt ("Your teacher opened …") with *Open now* and *Stay here*; it opens by itself after 10 seconds, and the countdown waits while the student is using the prompt. A student already on that experiment is not asked. *Withdraw* removes the prompt for anyone who has not answered yet.
+- **Lock screens.** Shows every student a full-screen "Eyes on your teacher" dialog (native modal: the page behind it is inert and Escape does not close it) until the teacher unlocks. *Leave session* stays available, since joining is voluntary.
+- **Rooms.** Inside a session, a student creates a room and shares its 4-character code with up to 5 classmates. Who controls: the creator controls first; the controller can hand control to any member, and members can ask for a turn; if the controller goes offline anyone may take control; if they leave, the longest-standing member takes over; nothing changes while the class is locked. Members on the same experiment follow the controller's parameters and their own sliders are disabled. Experiments that cannot apply shared values yet (no `applySettings` on `ExperimentShell`) show the controller's values next to the student's own. Pendulum, projectile, Ohm's law, Hooke's law, Newton's laws, energy conservation, harmonic motion, dilution and both RC circuits follow live.
+
+All of this rides the existing heartbeat: `PUT …/state` answers with `{ control, room }`, and students in a room report every second (a controller's slider moves go out within 0.3 s). There is no WebSocket server, so nothing extra to host. Rate limits are per student (state, rooms) and per teacher key (control). Rooms hold display names only and disappear with the session.
 
 ## Analytics
 
