@@ -155,8 +155,8 @@ const explode = (ctx: Ctx2D, w: number, h: number, f: number, frames: number) =>
   const cx = w / 2
   const cy = h / 2
   const R = Math.min(w, h) * 0.48
-  const flash = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * (0.3 + 0.7 * t))
-  const a = 1 - t
+  const flash = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * (0.45 + 0.55 * Math.sqrt(t)))
+  const a = Math.sqrt(1 - t)
   flash.addColorStop(0, `rgba(255,255,240,${a})`)
   flash.addColorStop(0.3, `rgba(255,200,80,${a * 0.9})`)
   flash.addColorStop(0.7, `rgba(255,90,20,${a * 0.6})`)
@@ -251,7 +251,7 @@ export const EFFECTS: Record<EffectId, ReactionEffectDef> = {
   bubble: FX('bubble', 'bubble', { en: 'Gas bubbles', uz: 'Gaz pufakchalari', ru: 'Пузырьки газа' }, 16, 96, 192, 14, true, false, 'bubble', bubbles(14, 3, 7, 91)),
   'electrolytic-bubble': FX('electrolytic-bubble', 'bubble', { en: 'Electrolysis bubbles', uz: 'Elektroliz pufakchalari', ru: 'Пузырьки при электролизе' }, 16, 48, 192, 16, true, false, 'bubble', bubbles(22, 1.5, 3, 101)),
   precipitate: FX('precipitate', 'precipitate', { en: 'Precipitate', uz: 'Choʻkma', ru: 'Осадок' }, 16, 128, 160, 8, false, false, null, precipitate),
-  explode: FX('explode', 'explode', { en: 'Explosion', uz: 'Portlash', ru: 'Взрыв' }, 12, 192, 192, 20, false, true, 'boom', explode),
+  explode: FX('explode', 'explode', { en: 'Explosion', uz: 'Portlash', ru: 'Взрыв' }, 12, 192, 192, 14, false, true, 'boom', explode),
   spark: FX('spark', 'spark', { en: 'Sparks', uz: 'Uchqunlar', ru: 'Искры' }, 12, 128, 128, 16, true, true, 'sizzle', sparks),
   cloud: FX('cloud', 'cloud', { en: 'Mixing cloud', uz: 'Aralashish buluti', ru: 'Облако смешивания' }, 12, 128, 128, 14, false, false, 'drip', cloud),
 }

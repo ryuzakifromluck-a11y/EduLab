@@ -3115,6 +3115,118 @@ export const QUIZZES: Record<string, QuizQuestionSource[]> = {
       },
     },
   ],
+  'electrolysis-water': [
+    {
+      id: 'electrodes-gases',
+      question: {
+        en: 'In the electrolysis of water, which gas collects at the cathode (negative electrode)?',
+        uz: 'Suv elektrolizida katodda (manfiy elektrodda) qaysi gaz yigʻiladi?',
+        ru: 'Какой газ собирается на катоде (отрицательном электроде) при электролизе воды?',
+      },
+      options: {
+        en: ['Oxygen', 'Hydrogen', 'Chlorine', 'Water vapour'],
+        uz: ['Kislorod', 'Vodorod', 'Xlor', 'Suv bugʻi'],
+        ru: ['Кислород', 'Водород', 'Хлор', 'Водяной пар'],
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'The cathode gives electrons to water: 4H₂O + 4e⁻ → 2H₂ + 4OH⁻. Hydrogen forms at the cathode and oxygen at the anode, where water loses electrons.',
+        uz: 'Katod suvga elektron beradi: 4H₂O + 4e⁻ → 2H₂ + 4OH⁻. Vodorod katodda, kislorod esa suv elektron yoʻqotadigan anodda hosil boʻladi.',
+        ru: 'Катод отдаёт электроны воде: 4H₂O + 4e⁻ → 2H₂ + 4OH⁻. Водород образуется на катоде, а кислород — на аноде, где вода теряет электроны.',
+      },
+    },
+    {
+      id: 'ratio',
+      question: {
+        en: 'After a few minutes the hydrogen tube holds 24 mL of gas. About how much oxygen is in the other tube?',
+        uz: 'Bir necha daqiqadan soʻng vodorod nayida 24 mL gaz bor. Ikkinchi nayda taxminan qancha kislorod bor?',
+        ru: 'Через несколько минут в трубке с водородом 24 мл газа. Сколько примерно кислорода в другой трубке?',
+      },
+      options: {
+        en: ['6 mL', '12 mL', '24 mL', '48 mL'],
+        uz: ['6 mL', '12 mL', '24 mL', '48 mL'],
+        ru: ['6 мл', '12 мл', '24 мл', '48 мл'],
+      },
+      correctIndex: 1,
+      explanation: {
+        en: '2H₂O → 2H₂ + O₂: two molecules of hydrogen form for each molecule of oxygen. Equal amounts of gas take equal volumes, so the volumes are in a 2 : 1 ratio: 24 mL : 12 mL.',
+        uz: '2H₂O → 2H₂ + O₂: har bir kislorod molekulasiga ikki vodorod molekulasi toʻgʻri keladi. Gazlarning teng miqdorlari teng hajmni egallaydi, shuning uchun hajmlar 2 : 1 nisbatda: 24 mL : 12 mL.',
+        ru: '2H₂O → 2H₂ + O₂: на каждую молекулу кислорода образуются две молекулы водорода. Равные количества газа занимают равные объёмы, поэтому объёмы относятся как 2 : 1: 24 мл : 12 мл.',
+      },
+    },
+    {
+      id: 'electrolyte',
+      question: {
+        en: 'Why is a little sodium sulfate (or dilute sulfuric acid) added to the water?',
+        uz: 'Nima uchun suvga ozgina natriy sulfat (yoki suyultirilgan sulfat kislota) qoʻshiladi?',
+        ru: 'Зачем в воду добавляют немного сульфата натрия (или разбавленной серной кислоты)?',
+      },
+      options: {
+        en: ['To make the gases colourful', 'To provide ions so the water conducts electricity', 'Because sodium sulfate is broken down into the gases', 'To stop the electrodes from heating up'],
+        uz: ['Gazlarni rangli qilish uchun', 'Suv tok oʻtkazishi uchun ionlar berish maqsadida', 'Chunki natriy sulfat parchalanib gazlarni hosil qiladi', 'Elektrodlar qizib ketmasligi uchun'],
+        ru: ['Чтобы газы стали цветными', 'Чтобы дать ионы, без которых вода не проводит ток', 'Потому что газы получаются из сульфата натрия', 'Чтобы электроды не нагревались'],
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'Pure water contains very few ions and hardly conducts. The electrolyte’s ions carry the current through the solution but are not used up: the hydrogen and oxygen still come from the water.',
+        uz: 'Toza suvda ionlar juda kam va u tokni deyarli oʻtkazmaydi. Elektrolit ionlari eritma orqali tokni tashiydi, lekin sarflanmaydi: vodorod va kislorod baribir suvdan hosil boʻladi.',
+        ru: 'В чистой воде очень мало ионов, и она почти не проводит ток. Ионы электролита переносят заряд через раствор, но не расходуются: водород и кислород по-прежнему получаются из воды.',
+      },
+    },
+    {
+      id: 'electrode-material',
+      question: {
+        en: 'Why are platinum or graphite electrodes used rather than copper?',
+        uz: 'Nega mis emas, balki platina yoki grafit elektrodlar ishlatiladi?',
+        ru: 'Почему используют платиновые или графитовые электроды, а не медные?',
+      },
+      options: {
+        en: [
+          'They are inert: a copper anode would dissolve instead of making oxygen',
+          'Copper does not conduct electricity',
+          'Platinum and graphite make the reaction exothermic',
+          'Copper would turn the hydrogen blue',
+        ],
+        uz: [
+          'Ular inert: mis anod kislorod hosil qilish oʻrniga eriydi',
+          'Mis elektr tokini oʻtkazmaydi',
+          'Platina va grafit reaksiyani ekzotermik qiladi',
+          'Mis vodorodni koʻk rangga boʻyaydi',
+        ],
+        ru: [
+          'Они инертны: медный анод растворялся бы вместо выделения кислорода',
+          'Медь не проводит электрический ток',
+          'Платина и графит делают реакцию экзотермической',
+          'Медь окрасила бы водород в синий цвет',
+        ],
+      },
+      correctIndex: 0,
+      explanation: {
+        en: 'Copper is oxidised more easily than water, so at a copper anode Cu → Cu²⁺ + 2e⁻ happens instead of oxygen forming, and the solution turns blue. Inert electrodes only pass electrons.',
+        uz: 'Mis suvdan osonroq oksidlanadi, shuning uchun mis anodda kislorod oʻrniga Cu → Cu²⁺ + 2e⁻ jarayoni boradi va eritma koʻk rangga kiradi. Inert elektrodlar faqat elektronlarni uzatadi.',
+        ru: 'Медь окисляется легче воды, поэтому на медном аноде вместо выделения кислорода идёт Cu → Cu²⁺ + 2e⁻, и раствор синеет. Инертные электроды только передают электроны.',
+      },
+    },
+    {
+      id: 'tests',
+      question: {
+        en: 'How can you show that the gas at the anode is oxygen?',
+        uz: 'Anoddagi gaz kislorod ekanini qanday koʻrsatish mumkin?',
+        ru: 'Как доказать, что газ на аноде — кислород?',
+      },
+      options: {
+        en: ['It burns with a squeaky pop', 'It relights a glowing splint', 'It turns limewater milky', 'It bleaches damp litmus paper'],
+        uz: ['U chiyillagan portlash bilan yonadi', 'U choʻgʻlangan choʻpni alangalantiradi', 'U ohakli suvni loyqalantiradi', 'U nam lakmus qogʻozini oqartiradi'],
+        ru: ['Он сгорает с хлопком', 'Он заставляет вспыхнуть тлеющую лучинку', 'Он мутит известковую воду', 'Он обесцвечивает влажную лакмусовую бумажку'],
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'Oxygen supports combustion, so a glowing splint bursts into flame. The squeaky pop is the test for hydrogen, limewater tests carbon dioxide and bleaching tests chlorine.',
+        uz: 'Kislorod yonishni quvvatlaydi, shuning uchun choʻgʻlangan choʻp alangalanadi. Chiyillagan portlash vodorodga, ohakli suv karbonat angidridga, oqartirish esa xlorga sinovdir.',
+        ru: 'Кислород поддерживает горение, поэтому тлеющая лучинка вспыхивает. Хлопок — проба на водород, известковая вода — на углекислый газ, обесцвечивание — на хлор.',
+      },
+    },
+  ],
   'dna-extraction': [
     {
       id: 'detergent',

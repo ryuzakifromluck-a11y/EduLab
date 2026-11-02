@@ -39,6 +39,7 @@ const SIMULATIONS: Record<string, LazyExoticComponent<ComponentType>> = {
   'chemistry/flame-test': lazy(() => import('../experiments/flame-test/FlameTestExperiment')),
   'chemistry/gc-ms-analysis': lazy(() => import('../experiments/gc-ms-analysis/GcMsAnalysisExperiment')),
   'chemistry/sodium-water': lazy(() => import('../experiments/sodium-water/SodiumWaterExperiment')),
+  'chemistry/electrolysis-water': lazy(() => import('../experiments/electrolysis-water/ElectrolysisExperiment')),
   'biology/dna-extraction': lazy(() => import('../experiments/dna-extraction/DnaExtractionExperiment')),
   'biology/pcr': lazy(() => import('../experiments/pcr/PcrExperiment')),
   'biology/gel-electrophoresis': lazy(() => import('../experiments/gel-electrophoresis/GelElectrophoresisExperiment')),

@@ -115,6 +115,7 @@ export const EXPERIMENTS: Experiment[] = [
   { id: 'gc-ms-analysis', subject: 'chemistry', category: 'analyticalChemistry', difficulty: 'advanced', duration: 30, status: 'available', order: 20, illustration: 'flask' },
   // Chemistry — reactions of metals and electrochemistry
   { id: 'sodium-water', subject: 'chemistry', category: 'inorganicChemistry', difficulty: 'intermediate', duration: 10, status: 'available', order: 21, illustration: 'beaker' },
+  { id: 'electrolysis-water', subject: 'chemistry', category: 'reactions', difficulty: 'intermediate', duration: 20, status: 'available', order: 22, illustration: 'circuit' },
   // Biology — molecular biology and genetics
   { id: 'dna-extraction', subject: 'biology', category: 'molecularBiology', difficulty: 'beginner', duration: 20, status: 'available', featured: true, order: 1, illustration: 'flask' },
   { id: 'pcr', subject: 'biology', category: 'genetics', difficulty: 'intermediate', duration: 25, status: 'available', order: 2, illustration: 'flask' },
