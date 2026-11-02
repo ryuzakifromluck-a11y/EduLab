@@ -45,7 +45,7 @@ describe.skipIf(!TEST_DATABASE_URL)('PostgreSQL', () => {
     expect(await pendingMigrations(pool)).toEqual([])
     expect(await migrate(pool)).toEqual([])
     const { rows } = await pool.query(`SELECT tablename FROM pg_tables WHERE schemaname = $1 ORDER BY 1`, [db.schema])
-    expect(rows.map((r) => r.tablename)).toEqual(['hypotheses', 'progress', 'remote_sessions', 'schema_migrations', 'sessions', 'users'])
+    expect(rows.map((r) => r.tablename)).toEqual(['analytics_counters', 'hypotheses', 'progress', 'remote_sessions', 'schema_migrations', 'sessions', 'users'])
   })
 
   it('enforces unique emails case-insensitively', async () => {
