@@ -52,7 +52,7 @@ export function ogImageUrl(origin: string, path: string): string {
 }
 
 /** Static routes worth indexing, in sitemap order. Experiments are added from the catalog. */
-const STATIC_PATHS = ['/', ...SUBJECTS.map((s) => `/${s}`), '/about', '/impact']
+const STATIC_PATHS = ['/', ...SUBJECTS.map((s) => `/${s}`), '/chemistry/items', '/about', '/impact']
 
 /** Every indexable path: static pages plus each experiment that can actually be run. */
 export function sitemapPaths(): string[] {
@@ -186,6 +186,20 @@ export function resolvePageMeta(pathname: string, t: Translate, origin: string, 
       image: ogImagePath(subject),
       imageAlt: t(`subject.${subject}.title`),
       jsonLd: [breadcrumbs(origin, [{ name: SITE_NAME, path: '/' }, { name: t(`nav.${subject}`), path }])],
+    }
+  }
+  if (subject === 'chemistry' && second === 'items' && !rest.length) {
+    return {
+      ...page(t('chemItems.metaTitle'), t('chemItems.metaDescription')),
+      image: ogImagePath(subject),
+      imageAlt: t('chemItems.metaTitle'),
+      jsonLd: [
+        breadcrumbs(origin, [
+          { name: SITE_NAME, path: '/' },
+          { name: t('nav.chemistry'), path: '/chemistry' },
+          { name: t('subject.tabs.items'), path },
+        ]),
+      ],
     }
   }
   const experiment = subject && second && !rest.length ? findExperiment(subject, second) : undefined
