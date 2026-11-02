@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  dropFlash,
   INDICATORS,
   equivalenceVolume,
   indicatorColor,
@@ -89,5 +90,32 @@ describe('indicators', () => {
   it('methyl orange changes before equivalence', () => {
     const ep = indicatorEndPoint(p, INDICATORS.methylOrange)
     expect(ep.errorMl!).toBeLessThan(0)
+  })
+})
+
+describe('dropFlash: the colour of a single drop before swirling', () => {
+  const p = { acidConcentration: 0.1, acidVolume: 25, baseConcentration: 0.1 }
+  const php = INDICATORS.phenolphthalein
+
+  it('shows nothing at the start: the local acid neutralises the drop', () => {
+    const f = dropFlash(p, php, 0)
+    expect(f.localPH).toBeLessThan(8.2)
+    expect(f.strength).toBeLessThan(0.01)
+    expect(f.permanent).toBe(false)
+  })
+
+  it('flashes pink near the end point and the flash lasts longer as it gets closer', () => {
+    const mid = dropFlash(p, php, 20)
+    const near = dropFlash(p, php, 24.5)
+    expect(near.localPH).toBeGreaterThan(9)
+    expect(near.strength).toBeGreaterThan(0.5)
+    expect(near.fadeTime).toBeGreaterThan(mid.fadeTime)
+    expect(near.permanent).toBe(false)
+  })
+
+  it('becomes permanent once the bulk solution has turned', () => {
+    const f = dropFlash(p, php, 25.2)
+    expect(f.permanent).toBe(true)
+    expect(f.fadeTime).toBe(Infinity)
   })
 })

@@ -319,6 +319,40 @@ export const QUIZZES: Record<string, QuizQuestionSource[]> = {
         ru: 'Индикатор меняет цвет в интервале около pKa ± 1. Бромтимоловый синий (pKa ≈ 7,1) меняет цвет прямо около pH 7, внутри резкого скачка кривой.',
       },
     },
+    {
+      id: 'fading-pink',
+      question: {
+        en: 'Near the end point, each drop of NaOH makes a pink patch in the flask that disappears when you swirl. What should you do?',
+        uz: 'Ekvivalentlik nuqtasiga yaqin har bir NaOH tomchisi kolbada pushti dogʻ hosil qiladi, chayqatganda u yoʻqoladi. Nima qilish kerak?',
+        ru: 'Вблизи конечной точки каждая капля NaOH даёт в колбе розовое пятно, которое исчезает при перемешивании. Что нужно делать?',
+      },
+      options: {
+        en: [
+          'Stop: the end point has been reached',
+          'Add the next drops one at a time, swirling after each, until the pink stays',
+          'Open the stopcock fully to finish faster',
+          'Add more phenolphthalein',
+        ],
+        uz: [
+          'Toʻxtash: ekvivalentlik nuqtasiga yetildi',
+          'Pushti rang saqlanib qolguncha tomchilarni birma-bir qoʻshib, har biridan keyin chayqatish',
+          'Tezroq tugatish uchun kranni toʻliq ochish',
+          'Koʻproq fenolftalein qoʻshish',
+        ],
+        ru: [
+          'Остановиться: конечная точка достигнута',
+          'Добавлять по одной капле и перемешивать после каждой, пока розовый цвет не сохранится',
+          'Полностью открыть кран, чтобы закончить быстрее',
+          'Добавить ещё фенолфталеина',
+        ],
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'Where a drop lands, the base is briefly in excess and the indicator turns pink. Swirling mixes it with the remaining acid and the colour goes. The end point is the first drop whose pink stays after swirling.',
+        uz: 'Tomchi tushgan joyda asos qisqa vaqt ortiqcha boʻladi va indikator pushti rangga kiradi. Chayqatilganda u qolgan kislota bilan aralashadi va rang yoʻqoladi. Ekvivalentlik nuqtasi — chayqatilgandan keyin ham pushti rangi saqlanadigan birinchi tomchi.',
+        ru: 'Там, где падает капля, основание на мгновение в избытке, и индикатор розовеет. При перемешивании оно смешивается с оставшейся кислотой, и окраска исчезает. Конечная точка — первая капля, после которой розовый цвет сохраняется при перемешивании.',
+      },
+    },
   ],
   // Ready for when these experiments ship; the card only appears on available experiment pages.
   'projectile-motion': [

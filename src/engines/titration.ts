@@ -204,3 +204,40 @@ export function indicatorEndPoint(p: TitrationParams, ind: Indicator) {
     errorPercent: volume === null ? null : ((volume - veq) / veq) * 100,
   }
 }
+
+/** Volume of flask solution a fresh drop first mixes with before swirling spreads it, mL. */
+export const LOCAL_MIX_VOLUME = 0.05
+
+export interface DropFlash {
+  /** pH in the small zone where the drop lands, before the flask is swirled. */
+  localPH: number
+  /** 0–1: how much stronger the indicator's base colour is in that zone than in the bulk. */
+  strength: number
+  /** Seconds for the local colour to fade by diffusion alone (swirling clears it at once). */
+  fadeTime: number
+  /** True once the colour no longer fades: the end point has been reached. */
+  permanent: boolean
+}
+
+/**
+ * The colour flash of a single titrant drop. A drop of base first meets only a small volume of
+ * the flask contents, so near the end point (when little acid is left) that zone turns the
+ * indicator's base colour for a moment, then fades as the drop mixes in. The flash lasts longer
+ * the closer the titration is to the end point, and becomes permanent once the bulk solution has
+ * changed colour. Early in the titration the local acid neutralises the drop and nothing is seen.
+ */
+export function dropFlash(p: TitrationParams, ind: Indicator, addedVolume: number, dropVolume = 0.05): DropFlash {
+  const bulk = titrationPoint(p, addedVolume)
+  // Net acid in the local zone (mmol) minus the base in the drop.
+  const localAcid = (bulk.hydronium - bulk.hydroxide) * LOCAL_MIX_VOLUME
+  const D = (localAcid - p.baseConcentration * dropVolume) / (LOCAL_MIX_VOLUME + dropVolume)
+  const root = Math.sqrt(D * D + 4 * KW)
+  const h = D >= 0 ? (D + root) / 2 : (2 * KW) / (root - D)
+  const localPH = -Math.log10(h)
+  const strength = Math.max(0, baseFormFraction(ind, localPH) - baseFormFraction(ind, bulk.pH))
+  const permanent = indicatorState(ind, bulk.pH) !== 'acid'
+  // Fraction of the original acid still left: the less acid, the slower the flash is consumed.
+  const left = Math.max(0, bulk.excessAcidMmol) / (p.acidConcentration * p.acidVolume)
+  const fadeTime = permanent ? Infinity : Math.min(6, 0.25 + 0.04 / Math.max(left, 1e-4))
+  return { localPH, strength, fadeTime, permanent }
+}

@@ -2592,6 +2592,8 @@ const uz = {
       },
     },
     titration: {
+      swirl: 'Chayqatish',
+      flashHint: 'Tomchi tushgan joyda eritma boʻyaldi, lekin kolbani chayqatganda rang yoʻqoladi: siz ekvivalentlik nuqtasiga yaqinsiz. Keyingi tomchilarni birma-bir qoʻshing va har biridan keyin chayqating.',
       view2d: 'Titrlash qurilmasi (2D koʻrinish)',
       p: {
         acidConc: 'HCl konsentratsiyasi',
@@ -2627,6 +2629,7 @@ const uz = {
         equivalence: 'Ekvivalentlik nuqtasi',
         eqPh: '25 °C da pH 7,00',
         indicator: 'Indikator rangi',
+        flash: 'Rang chaqnab yoʻqoladi: chayqating va tomchilab qoʻshing',
         endPoint: 'Rang {{value}} mL da oʻzgaradi',
         noEndPoint: 'Bu oraliqda rang oʻzgarmaydi',
         initial: 'Boshlangʻich konsentratsiyalar',

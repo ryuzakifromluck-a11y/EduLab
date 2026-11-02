@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import {
   INDICATORS,
+  dropFlash,
   equivalenceVolume,
   indicatorColor,
   indicatorEndPoint,
@@ -19,13 +20,20 @@ export const SPEEDS = [0.25, 0.5, 1, 2, 4]
 export interface DropEvent {
   /** performance.now() timestamp when the drop left the tip. */
   t: number
+  /** 0–1 strength of the local indicator colour this drop makes where it lands. */
+  flash: number
+  /** Seconds the local colour takes to fade without swirling. */
+  fadeTime: number
 }
+
+/** Seconds a drop takes to fall from the burette tip into the flask. */
+export const DROP_FALL = 0.32
 
 /**
  * Titration state. Titrant is delivered in discrete drops of DROP_VOLUME while
  * the stopcock is open; every drop recomputes the pH with the equilibrium engine.
  */
-export function useTitration() {
+export function useTitration({ onDrop }: { onDrop?: () => void } = {}) {
   const [params, setParamsState] = useState<TitrationParams>({
     acidConcentration: 0.1,
     acidVolume: 25,
@@ -38,6 +46,10 @@ export function useTitration() {
   const log = useRef<{ volume: number; pH: number }[]>([{ volume: 0, pH: titrationPoint(params, 0).pH }])
   const drops = useRef<DropEvent[]>([])
   const timeToNextDrop = useRef(0)
+  /** performance.now() of the last swirl; swirling mixes away local colour flashes. */
+  const swirledAt = useRef(-Infinity)
+  const onDropRef = useRef(onDrop)
+  onDropRef.current = onDrop
   const [, force] = useState(0)
 
   const logPoint = useCallback((v: number, p: TitrationParams) => {
@@ -49,6 +61,8 @@ export function useTitration() {
 
   const paramsRef = useRef(params)
   paramsRef.current = params
+  const indicatorRef = useRef(indicatorId)
+  indicatorRef.current = indicatorId
 
   const addVolume = useCallback(
     (dv: number) => {
@@ -61,6 +75,13 @@ export function useTitration() {
     [logPoint],
   )
 
+  const pushDrop = useCallback(() => {
+    const f = dropFlash(paramsRef.current, INDICATORS[indicatorRef.current], added.current - DROP_VOLUME)
+    drops.current.push({ t: performance.now(), flash: f.permanent ? 0 : f.strength, fadeTime: f.fadeTime })
+    if (drops.current.length > 40) drops.current.shift()
+    onDropRef.current?.()
+  }, [])
+
   useAnimationFrame((dt) => {
     timeToNextDrop.current -= dt
     const interval = DROP_VOLUME / (BASE_RATE * speed)
@@ -70,8 +91,7 @@ export function useTitration() {
         setDripping(false)
         break
       }
-      drops.current.push({ t: performance.now() })
-      if (drops.current.length > 40) drops.current.shift()
+      pushDrop()
     }
   }, dripping)
   useTicker(12, dripping)
@@ -108,23 +128,38 @@ export function useTitration() {
   )
 
   const addDrop = useCallback(() => {
-    if (addVolume(DROP_VOLUME)) drops.current.push({ t: performance.now() })
+    if (addVolume(DROP_VOLUME)) pushDrop()
     force((n) => n + 1)
-  }, [addVolume])
+  }, [addVolume, pushDrop])
 
   const addMl = useCallback(
     (ml: number) => {
-      addVolume(ml)
-      drops.current.push({ t: performance.now() })
+      if (addVolume(ml)) pushDrop()
       force((n) => n + 1)
     },
-    [addVolume],
+    [addVolume, pushDrop],
   )
 
   const indicator = INDICATORS[indicatorId]
   const point = titrationPoint(params, added.current)
   const veq = equivalenceVolume(params)
   const endPoint = useMemo(() => indicatorEndPoint(params, indicator), [params, indicator])
+
+  /** Strength (0–1) of the local colour flash still visible in the flask right now. */
+  const flashNow = (now = performance.now()) => {
+    let best = 0
+    for (const d of drops.current) {
+      if (d.t < swirledAt.current) continue
+      const age = (now - d.t) / 1000 - DROP_FALL
+      if (age < 0) continue
+      best = Math.max(best, d.flash * Math.exp(-age / d.fadeTime))
+    }
+    return best
+  }
+  const colorState = indicatorState(indicator, point.pH)
+  /** What the student sees: colourless, a flash that fades on swirling, or the permanent end-point colour. */
+  const indicatorPhase: 'acid' | 'flash' | 'endPoint' =
+    colorState !== 'acid' ? 'endPoint' : flashNow() > 0.15 ? 'flash' : 'acid'
 
   return {
     params,
@@ -151,7 +186,15 @@ export function useTitration() {
     endPoint,
     reachable: veq <= BURETTE_CAPACITY,
     color: indicatorColor(indicator, point.pH),
-    colorState: indicatorState(indicator, point.pH),
+    colorState,
+    indicatorPhase,
+    flashNow,
+    swirledAt,
+    /** Swirl the flask: mixes the last drops in, so a local colour flash disappears. */
+    swirl: () => {
+      swirledAt.current = performance.now()
+      force((n) => n + 1)
+    },
     log: log.current.slice(),
     logRef: log,
     drops,

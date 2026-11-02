@@ -2589,6 +2589,8 @@ const en = {
       },
     },
     titration: {
+      swirl: 'Swirl',
+      flashHint: 'The drop coloured the solution where it landed, but the colour fades when you swirl the flask: you are close to the end point. Add the next drops one at a time and swirl after each.',
       view2d: 'Titration apparatus (2D view)',
       p: {
         acidConc: 'HCl concentration',
@@ -2624,6 +2626,7 @@ const en = {
         equivalence: 'Equivalence point',
         eqPh: 'pH 7.00 at 25 °C',
         indicator: 'Indicator colour',
+        flash: 'Colour flash fades: swirl and go drop by drop',
         endPoint: 'Colour change at {{value}} mL',
         noEndPoint: 'No colour change in range',
         initial: 'Initial concentrations',
