@@ -2984,6 +2984,103 @@ export const QUIZZES: Record<string, QuizQuestionSource[]> = {
       },
     },
   ],
+  'sodium-water': [
+    {
+      id: 'gas',
+      question: {
+        en: 'Which gas is produced when sodium reacts with water?',
+        uz: 'Natriy suv bilan reaksiyaga kirishganda qaysi gaz ajraladi?',
+        ru: 'Какой газ выделяется при реакции натрия с водой?',
+      },
+      options: {
+        en: ['Oxygen', 'Hydrogen', 'Carbon dioxide', 'Chlorine'],
+        uz: ['Kislorod', 'Vodorod', 'Karbonat angidrid', 'Xlor'],
+        ru: ['Кислород', 'Водород', 'Углекислый газ', 'Хлор'],
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'Sodium takes the place of hydrogen in water: 2Na + 2H₂O → 2NaOH + H₂. The hydrogen fizzes off, and a lit splint makes it burn with a squeaky pop.',
+        uz: 'Natriy suvdagi vodorod oʻrnini egallaydi: 2Na + 2H₂O → 2NaOH + H₂. Vodorod vishillab ajraladi, yonib turgan choʻp uni „chiyillagan“ portlash bilan yondiradi.',
+        ru: 'Натрий замещает водород в воде: 2Na + 2H₂O → 2NaOH + H₂. Водород выделяется с шипением, а горящая лучинка поджигает его с характерным хлопком.',
+      },
+    },
+    {
+      id: 'exothermic',
+      question: {
+        en: 'The water warms up while the sodium reacts. What does this tell you about the reaction?',
+        uz: 'Natriy reaksiyaga kirishayotganda suv isiydi. Bu reaksiya haqida nimani bildiradi?',
+        ru: 'Пока натрий реагирует, вода нагревается. Что это говорит о реакции?',
+      },
+      options: {
+        en: ['It is endothermic: it takes in heat', 'It is exothermic: it releases heat', 'It is neither: the heat comes from friction', 'It is a physical change, not a reaction'],
+        uz: ['Endotermik: issiqlik yutadi', 'Ekzotermik: issiqlik chiqaradi', 'Hech biri emas: issiqlik ishqalanishdan', 'Bu reaksiya emas, fizik oʻzgarish'],
+        ru: ['Эндотермическая: поглощает теплоту', 'Экзотермическая: выделяет теплоту', 'Ни та ни другая: тепло от трения', 'Это физическое изменение, а не реакция'],
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'About 184 kJ is released per mole of sodium (ΔH < 0). The heat melts the sodium into a ball and warms the water; with enough heat the hydrogen ignites.',
+        uz: 'Har bir mol natriyga taxminan 184 kJ issiqlik ajraladi (ΔH < 0). Bu issiqlik natriyni sharchaga aylantirib eritadi va suvni isitadi; issiqlik yetarli boʻlsa, vodorod alangalanadi.',
+        ru: 'На моль натрия выделяется около 184 кДж (ΔH < 0). Теплота плавит натрий в шарик и нагревает воду; при достаточном нагреве водород загорается.',
+      },
+    },
+    {
+      id: 'equation',
+      question: {
+        en: 'Which is the balanced equation for the reaction?',
+        uz: 'Reaksiyaning toʻgʻri tenglashtirilgan tenglamasi qaysi?',
+        ru: 'Какое уравнение реакции уравнено правильно?',
+      },
+      options: {
+        en: ['Na + H₂O → NaOH + H₂', '2Na + 2H₂O → 2NaOH + H₂', '2Na + H₂O → Na₂O + H₂', 'Na + 2H₂O → NaOH₂ + H₂'],
+        uz: ['Na + H₂O → NaOH + H₂', '2Na + 2H₂O → 2NaOH + H₂', '2Na + H₂O → Na₂O + H₂', 'Na + 2H₂O → NaOH₂ + H₂'],
+        ru: ['Na + H₂O → NaOH + H₂', '2Na + 2H₂O → 2NaOH + H₂', '2Na + H₂O → Na₂O + H₂', 'Na + 2H₂O → NaOH₂ + H₂'],
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'Hydrogen gas is diatomic (H₂), so two water molecules must react, which needs two sodium atoms: 2Na + 2H₂O → 2NaOH + H₂. Both sides then have 2 Na, 4 H and 2 O.',
+        uz: 'Vodorod gazi ikki atomli (H₂), shuning uchun ikki molekula suv reaksiyaga kirishishi kerak, bu esa ikki natriy atomini talab qiladi: 2Na + 2H₂O → 2NaOH + H₂. Shunda ikkala tomonda 2 Na, 4 H va 2 O boʻladi.',
+        ru: 'Водород двухатомный (H₂), поэтому должны прореагировать две молекулы воды, а для них нужны два атома натрия: 2Na + 2H₂O → 2NaOH + H₂. Тогда в обеих частях по 2 Na, 4 H и 2 O.',
+      },
+    },
+    {
+      id: 'motion',
+      question: {
+        en: 'What does a piece of sodium do on the surface of the water?',
+        uz: 'Natriy boʻlakchasi suv yuzasida nima qiladi?',
+        ru: 'Что делает кусочек натрия на поверхности воды?',
+      },
+      options: {
+        en: ['It sinks to the bottom and dissolves slowly', 'It floats without moving', 'It melts into a ball and darts around rapidly', 'It turns the water blue'],
+        uz: ['Tubiga choʻkib, sekin eriydi', 'Qimirlamay suzib turadi', 'Sharchaga aylanib eriydi va tez-tez yuguradi', 'Suvni koʻk rangga boʻyaydi'],
+        ru: ['Тонет и медленно растворяется', 'Плавает неподвижно', 'Плавится в шарик и быстро мечется', 'Окрашивает воду в синий цвет'],
+      },
+      correctIndex: 2,
+      explanation: {
+        en: 'Sodium (0.97 g/cm³) is less dense than water, so it floats. The heat of the reaction melts it (melting point 98 °C), and the jet of hydrogen pushes the ball around the surface.',
+        uz: 'Natriyning zichligi (0,97 g/sm³) suvnikidan kichik, shuning uchun u suzadi. Reaksiya issiqligi uni eritadi (erish harorati 98 °C), vodorod oqimi esa sharchani suv yuzasida itarib yuradi.',
+        ru: 'Натрий (0,97 г/см³) легче воды, поэтому плавает. Теплота реакции его плавит (температура плавления 98 °C), а струя водорода толкает шарик по поверхности.',
+      },
+    },
+    {
+      id: 'phenolphthalein',
+      question: {
+        en: 'The water contained phenolphthalein. What colour does it turn, and why?',
+        uz: 'Suvda fenolftalein bor edi. U qanday rangga kiradi va nima uchun?',
+        ru: 'В воду добавили фенолфталеин. В какой цвет она окрасится и почему?',
+      },
+      options: {
+        en: ['Pink, because NaOH makes the solution basic', 'Red, because the solution becomes acidic', 'It stays colourless, because the solution is neutral', 'Yellow, because hydrogen is produced'],
+        uz: ['Pushti, chunki NaOH eritmani ishqoriy qiladi', 'Qizil, chunki eritma kislotali boʻladi', 'Rangsiz qoladi, chunki eritma neytral', 'Sariq, chunki vodorod ajraladi'],
+        ru: ['Розовый, потому что NaOH делает раствор щелочным', 'Красный, потому что раствор становится кислым', 'Остаётся бесцветным, потому что раствор нейтральный', 'Жёлтый, потому что выделяется водород'],
+      },
+      correctIndex: 0,
+      explanation: {
+        en: 'The product sodium hydroxide is a strong base (an alkali). Phenolphthalein is colourless below about pH 8.2 and pink above it, so pink streaks appear where the sodium has been.',
+        uz: 'Hosil boʻlgan natriy gidroksid kuchli asos (ishqor). Fenolftalein taxminan pH 8,2 dan past qiymatlarda rangsiz, undan yuqorida pushti, shuning uchun natriy oʻtgan joyda pushti izlar paydo boʻladi.',
+        ru: 'Образующийся гидроксид натрия — сильное основание (щёлочь). Фенолфталеин бесцветен примерно до pH 8,2 и розовый выше, поэтому там, где прошёл натрий, появляются розовые полосы.',
+      },
+    },
+  ],
   'dna-extraction': [
     {
       id: 'detergent',

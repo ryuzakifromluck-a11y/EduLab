@@ -18,6 +18,7 @@ export function ReactionEffect({
   speed = 1,
   restartKey,
   onComplete,
+  additive = false,
   ...props
 }: {
   effect: EffectId
@@ -30,6 +31,8 @@ export function ReactionEffect({
   speed?: number
   restartKey?: unknown
   onComplete?: () => void
+  /** Additive blending suits dark scenes; on light backgrounds normal blending keeps colours visible. */
+  additive?: boolean
 } & Omit<AnimatedSpriteProps, 'sheet' | 'frames' | 'fps' | 'loop' | 'height' | 'color' | 'opacity' | 'restartKey' | 'onComplete' | 'additive'>) {
   const def = EFFECTS[effect]
   const { sheet, frames } = useMemo(() => effectFrames(effect), [effect])
@@ -51,7 +54,7 @@ export function ReactionEffect({
       frames={frames}
       fps={def.fps * speed}
       loop={def.loop}
-      additive={def.additive}
+      additive={additive && def.additive}
       height={height}
       color={color}
       opacity={opacity}
