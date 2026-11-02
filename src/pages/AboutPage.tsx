@@ -2,8 +2,24 @@ import { CheckCircle2, CircleDashed } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Container } from '../components/ui/primitives'
 
-const IMPLEMENTED = ['experiments', 'models', 'graphs', 'formula', 'presentation', 'languages', 'themes', 'fallback', 'csv', 'accounts'] as const
-const PLANNED = ['hypothesis', 'quiz', 'remote', 'pwa', 'analytics', 'ai', 'more'] as const
+const IMPLEMENTED = [
+  'experiments',
+  'models',
+  'graphs',
+  'formula',
+  'presentation',
+  'languages',
+  'themes',
+  'fallback',
+  'csv',
+  'accounts',
+  'quiz',
+  'hypothesis',
+  'remote',
+  'pwa',
+  'ai',
+] as const
+const PLANNED = ['hypothesisAll', 'remoteRooms', 'analytics'] as const
 
 export default function AboutPage() {
   const { t } = useTranslation()
