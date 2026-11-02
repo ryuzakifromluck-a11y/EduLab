@@ -1,5 +1,5 @@
 /** Vercel Function: GET /api/health. Used by the post-deploy smoke test and the uptime workflow. */
-declare const process: { env: { VERCEL_GIT_COMMIT_SHA?: string; VERCEL_ENV?: string; AI_API_KEY?: string; AI_BASE_URL?: string } }
+declare const process: { env: { VERCEL_GIT_COMMIT_SHA?: string; VERCEL_ENV?: string; AI_API_KEY?: string; AI_BASE_URL?: string; DATABASE_URL?: string; DB_HOST?: string } }
 
 export function GET() {
   const env = process.env
@@ -10,6 +10,8 @@ export function GET() {
       environment: env.VERCEL_ENV ?? 'unknown',
       // Whether the tutor has an upstream configured; never the key itself.
       tutorConfigured: Boolean(env.AI_API_KEY || env.AI_BASE_URL),
+      // Whether /api/analytics has a database; never the connection string.
+      analyticsConfigured: Boolean(env.DATABASE_URL || env.DB_HOST),
     }),
     { headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } },
   )

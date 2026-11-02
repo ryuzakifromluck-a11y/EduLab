@@ -15,6 +15,7 @@ import { fmt } from '../../lib/format'
 import { GRAVITY_PRESETS, SPEEDS, useProjectile } from './useProjectile'
 import { ProjectileScene } from './ProjectileScene'
 import { Projectile2D } from './Projectile2D'
+import { applySharedSettings, bool, num } from '../../lib/sharedSettings'
 
 const P = 'exp.projectile-motion'
 
@@ -307,6 +308,15 @@ export default function ProjectileExperiment() {
   return (
     <ExperimentShell
       experiment={experiment}
+      applySettings={(s) =>
+        applySharedSettings(s, {
+          speed: num(p.speed, 1, 40, p.setSpeed),
+          angleDeg: num(p.angleDeg, 0, 90, p.setAngle),
+          height: num(p.height, 0, 30, p.setHeight),
+          gravity: num(p.gravity, 0.5, 25, p.setGravity),
+          airResistance: bool(p.airResistance, p.setAirResistance),
+        })
+      }
       progressSettings={{ speed: p.speed, angleDeg: p.angleDeg, height: p.height, gravity: p.gravity, airResistance: p.airResistance }}
       viewport={viewport}
       controls={controls}

@@ -3,7 +3,7 @@ import { useEffect, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Scatter, Tooltip, XAxis, YAxis } from 'recharts'
 import { findExperiment } from '../../data/experiments'
-import { METALS, METAL_IDS, flameColor, photonEnergy, wavelengthToRgb, type MetalId } from '../../engines/flameTest'
+import { METALS, METAL_IDS, flameColor, photonEnergy, strongestLine, wavelengthToRgb, type MetalId } from '../../engines/flameTest'
 import { ChartTabs, type ChartDef } from '../../components/lab/ChartTabs'
 import { axisProps, tooltipProps, useChartTheme } from '../../components/lab/chartTheme'
 import { SelectField, Toggle, type Measurement } from '../../components/lab/controls'
@@ -267,7 +267,7 @@ export default function FlameTestExperiment() {
   return (
     <ExperimentShell
       experiment={experiment}
-      progressSettings={{ sample: x.sample, cobaltGlass: x.cobaltGlass, identified: x.verdict === 'correct' }}
+      progressSettings={{ sample: x.sample, wavelength: strongestLine(x.metal).wavelength, cobaltGlass: x.cobaltGlass, identified: x.verdict === 'correct' }}
       viewport={viewport}
       controls={controls}
       presenterControls={presenterControls}

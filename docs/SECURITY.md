@@ -30,7 +30,7 @@ Already correct and kept: `passwordHash` never leaves the server (all responses 
 2. Serve the API from the same site as the app: ideally the same origin through a rewrite (`/api/auth/*`, `/api/progress/*` → the API host), or a subdomain such as `api.edulab.example`. Then leave `COOKIE_SAMESITE` at `Lax`.
 3. If the app calls the API from another origin, set `VITE_API_URL` at build time (the CSP then allows it) and `CORS_ORIGINS=https://your-app.example` on the API. Only use `COOKIE_SAMESITE=None` if the two are on different sites, and know that browsers that block third-party cookies will then not keep users signed in.
 4. Behind your own reverse proxy (nginx, Caddy), set `TRUST_PROXY=1` so limits see real client addresses. Do not set it when clients reach Node directly.
-5. On the analytics server, set `ALLOWED_ORIGIN` only if the app posts to it from another origin.
+5. On the analytics API (Vercel Functions or the local server), set `ALLOWED_ORIGIN` only if the app posts to it from another origin. It stores only aggregate counters in `analytics_counters`; client addresses are used in memory for rate limiting and never written.
 6. Set a monthly spend limit on the LLM account; the per-IP tutor limit is in memory and per instance.
 
 ## Known limits

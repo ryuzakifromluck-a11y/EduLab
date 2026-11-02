@@ -5,6 +5,7 @@ import { REMOTE_POLL_MS } from '../../lib/remoteCode'
 import { useRemoteSession } from '../../store/remoteSession'
 import { Button, Card } from '../ui/primitives'
 import { QRCodeGenerator } from './QRCodeGenerator'
+import { ClassControls } from './ClassControls'
 import { StudentGrid } from './StudentGrid'
 
 /** Re-renders every second for countdowns and "seconds ago" labels. */
@@ -143,7 +144,8 @@ export function TeacherDashboard() {
             </span>
           )}
         </div>
-        <StudentGrid students={students} now={now} />
+        {classView && <ClassControls control={classView.control} students={students} />}
+        <StudentGrid students={students} rooms={classView?.rooms ?? []} now={now} />
       </section>
     </div>
   )

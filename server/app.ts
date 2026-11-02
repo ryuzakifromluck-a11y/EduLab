@@ -8,7 +8,7 @@ import { signToken, verifyToken } from './jwt.ts'
 import { hashPassword, verifyPassword } from './password.ts'
 import { RateLimiter, clientIp, ipKey, type RateLimitOptions } from './rateLimit.ts'
 import { emptySchema, firstError, loginSchema, progressSchema, registerSchema, updateMeSchema } from './schemas.ts'
-import { createRemoteRegistry, RemoteError, type RemoteRegistry } from './remote.ts'
+import { createRemoteRegistry, normalizeCode, RemoteError, type RemoteRegistry } from './remote.ts'
 import { EmailTakenError, type Store, type UserRow } from './store.ts'
 
 export type SameSite = 'Strict' | 'Lax' | 'None'
@@ -170,6 +170,12 @@ export function createApp({
     write: new RateLimiter(limits.write),
     // QR remote: creating and joining sessions, per address. A whole class behind one school IP joins at once.
     remote: new RateLimiter({ burst: 120, windowMs: MINUTE, perDay: 20_000 }),
+    // Per student: a heartbeat every second in a room, plus quick updates while the controller drags a slider.
+    remoteState: new RateLimiter({ burst: 300, windowMs: MINUTE, perDay: 40_000 }),
+    // Per student: creating, joining and handing over rooms.
+    remoteRoom: new RateLimiter({ burst: 30, windowMs: MINUTE, perDay: 2_000 }),
+    // Per session: the teacher's push and lock buttons.
+    remoteControl: new RateLimiter({ burst: 30, windowMs: MINUTE, perDay: 2_000 }),
   }
 
   // A real hash to compare against when the email is unknown, so a login
@@ -374,7 +380,7 @@ export function createApp({
       enforce(limiter.remote, ipOf(req))
       return [201, remote.create()]
     }
-    const r = /^\/api\/remote\/session\/([^/]+)(?:\/(join|state|leave))?$/.exec(path)
+    const r = /^\/api\/remote\/session\/([^/]+)(?:\/(join|state|leave|control|room))?$/.exec(path)
     if (r) {
       let code: string
       try {
@@ -394,7 +400,24 @@ export function createApp({
         enforce(limiter.remote, ipOf(req))
         return [201, remote.join(code, (await obj()).name)]
       }
-      if (action === 'state' && method === 'PUT') return [200, remote.report(code, await obj())]
+      // Keyed by the credentials as sent, so nobody can spend another student's (or the teacher's) budget
+      // by quoting their id; wrong keys only fill their own buckets, which the limiter caps in number.
+      const part = (v: unknown) => (typeof v === 'string' ? v.slice(0, 64) : '')
+      const studentKey = (body: Record<string, unknown>) => `${normalizeCode(code)}:${part(body.studentId)}:${part(body.studentKey)}`
+      if (action === 'state' && method === 'PUT') {
+        const body = await obj()
+        enforce(limiter.remoteState, studentKey(body))
+        return [200, remote.report(code, body)]
+      }
+      if (action === 'room' && method === 'POST') {
+        const body = await obj()
+        enforce(limiter.remoteRoom, studentKey(body))
+        return [200, { room: remote.room(code, body) }]
+      }
+      if (action === 'control' && method === 'POST') {
+        enforce(limiter.remoteControl, `${normalizeCode(code)}:${part(teacherKey)}`)
+        return [200, remote.control(code, teacherKey, await obj())]
+      }
       if (action === 'leave' && method === 'POST') return [200, remote.leave(code, await obj())]
       throw new HttpError(405, 'methodNotAllowed')
     }

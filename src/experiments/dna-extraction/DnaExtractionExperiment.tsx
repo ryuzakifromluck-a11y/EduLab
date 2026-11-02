@@ -291,7 +291,7 @@ export default function DnaExtractionExperiment() {
   return (
     <ExperimentShell
       experiment={experiment}
-      progressSettings={{ source: s.source, amount: s.amount, detergent: s.detergent, salt: s.salt, ethanolTemp: s.ethanolTemp }}
+      progressSettings={{ source: s.source, amount: s.amount, mashTime: s.mashTime, detergent: s.detergent, salt: s.salt, protease: s.protease, ethanolTemp: s.ethanolTemp, ethanolRatio: s.ethanolRatio }}
       viewport={viewport}
       controls={controls}
       presenterControls={presenterControls}

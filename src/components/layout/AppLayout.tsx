@@ -10,6 +10,7 @@ import { SEO } from '../../seo/useSEO'
 import { Footer } from './Footer'
 import { Header } from './Header'
 import { InstallBanner } from './InstallBanner'
+import { ClassControlLayer } from '../student/ClassControlLayer'
 import { PageLoader } from '../PageLoader'
 
 function ScrollToTop() {
@@ -132,6 +133,7 @@ export function AppLayout() {
       </main>
       <Footer />
       <InstallBanner />
+      <ClassControlLayer />
     </div>
   )
 }

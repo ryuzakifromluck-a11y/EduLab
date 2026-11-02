@@ -14,6 +14,7 @@ import { CHART_MARGIN, OverlayNote, axisLabels } from '../shared/lab'
 import { GRAVITY_PRESETS, H_MAX, H_MIN, SPEEDS, useEnergyConservation } from './useEnergyConservation'
 import { EnergyConservationScene } from './EnergyConservationScene'
 import { EnergyConservation2D } from './EnergyConservation2D'
+import { applySharedSettings, num } from '../../lib/sharedSettings'
 
 const P = 'exp.energy-conservation'
 
@@ -255,6 +256,14 @@ export default function EnergyConservationExperiment() {
   return (
     <ExperimentShell
       experiment={experiment}
+      applySettings={(s) =>
+        applySharedSettings(s, {
+          height: num(height, H_MIN, H_MAX, e.setHeight),
+          mass: num(mass, 10, 100, e.setMass),
+          friction: num(friction, 0, 0.5, e.setFriction),
+          gravity: num(gravity, 0.5, 25, e.setGravity),
+        })
+      }
       progressSettings={{ height, mass, friction, gravity }}
       viewport={viewport}
       controls={controls}

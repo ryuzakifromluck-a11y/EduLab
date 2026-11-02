@@ -17,6 +17,7 @@ import { CHART_MARGIN, OverlayNote, RecordBox, axisLabels } from '../shared/lab'
 import { C1_MAX, SPEEDS, useDilution } from './useDilution'
 import { DilutionScene } from './DilutionScene'
 import { Dilution2D } from './Dilution2D'
+import { applySharedSettings, choice, num } from '../../lib/sharedSettings'
 
 const P = 'exp.dilution'
 
@@ -219,6 +220,12 @@ export default function DilutionExperiment() {
   return (
     <ExperimentShell
       experiment={experiment}
+      applySettings={(s) => {
+        // The flask first: it bounds how much stock (v1) fits.
+        const flask = typeof s.v2 === 'number' && (FLASKS as readonly number[]).includes(s.v2) ? (s.v2 as FlaskVolume) : v2
+        applySharedSettings(s, { v2: choice<number>(v2, FLASKS, (f) => x.setV2(f as FlaskVolume)) })
+        applySharedSettings(s, { c1: num(c1, 0.1, C1_MAX, x.setC1), v1: num(v1, 1, flask / 2, x.setV1) })
+      }}
       progressSettings={{ c1, v1, v2 }}
       viewport={viewport}
       controls={controls}

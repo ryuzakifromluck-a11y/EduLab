@@ -16,6 +16,7 @@ import { CHART_MARGIN, OverlayNote, RecordBox, axisLabels } from '../shared/lab'
 import { F_MAX, MU_MAX, M_MAX, M_MIN, SPEEDS, TRACK, useNewtonsLaws } from './useNewtonsLaws'
 import { NewtonsLawsScene } from './NewtonsLawsScene'
 import { NewtonsLaws2D } from './NewtonsLaws2D'
+import { applySharedSettings, num } from '../../lib/sharedSettings'
 
 const P = 'exp.newtons-laws'
 
@@ -252,6 +253,9 @@ export default function NewtonsLawsExperiment() {
   return (
     <ExperimentShell
       experiment={experiment}
+      applySettings={(s) =>
+        applySharedSettings(s, { force: num(force, 0, F_MAX, n.setForce), mass: num(mass, M_MIN, M_MAX, n.setMass), friction: num(friction, 0, MU_MAX, n.setFriction) })
+      }
       progressSettings={{ force, mass, friction }}
       viewport={viewport}
       controls={controls}

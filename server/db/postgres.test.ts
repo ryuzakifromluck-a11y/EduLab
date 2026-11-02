@@ -17,7 +17,7 @@ describe('databaseConfig', () => {
 
   it('creates every table and index the API needs', () => {
     const sql = loadMigrations().map((m) => m.sql).join('\n')
-    for (const t of ['users', 'progress', 'sessions', 'remote_sessions']) expect(sql).toContain(`CREATE TABLE ${t} (`)
+    for (const t of ['users', 'progress', 'sessions', 'remote_sessions', 'analytics_counters']) expect(sql).toContain(`CREATE TABLE ${t} (`)
     expect(sql).toMatch(/UNIQUE INDEX users_email_key ON users \(lower\(email\)\)/)
     expect(sql).toMatch(/INDEX progress_experiment_id_idx ON progress \(experiment_id\)/)
   })
