@@ -301,7 +301,7 @@ export default function JoulesExperimentExperiment() {
   return (
     <ExperimentShell
       experiment={experiment}
-      progressSettings={{ method: j.method, mass: j.mass, height: j.height, insulated: j.insulated ? 1 : 0 }}
+      progressSettings={{ method: j.method, mass: j.mass, height: j.height, voltage: j.voltage, resistance: j.resistance, insulated: j.insulated ? 1 : 0 }}
       viewport={viewport}
       controls={controls}
       presenterControls={presenterControls}
