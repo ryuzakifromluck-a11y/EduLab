@@ -30,6 +30,9 @@ export function TitrationScene({ ctl, glass }: { ctl: TitrationController; glass
   const buretteLiquid = useRef<THREE.Mesh>(null)
   const handle = useRef<THREE.Mesh>(null)
   const dropMesh = useRef<THREE.InstancedMesh>(null)
+  const flaskGroup = useRef<THREE.Group>(null)
+  const flash = useRef<THREE.Mesh>(null)
+  const flashMat = useRef<THREE.MeshBasicMaterial>(null)
   const dummy = useMemo(() => new THREE.Object3D(), [])
   const shellGeom = useMemo(() => {
     const pts = flaskProfile(FLASK.coneHeight)
@@ -67,8 +70,24 @@ export function TitrationScene({ ctl, glass }: { ctl: TitrationController; glass
       const target = ctl.dripping ? Math.PI / 2 : 0
       handle.current.rotation.x += (target - handle.current.rotation.x) * 0.2
     }
+    const now = performance.now()
+    // Local colour where the last drops landed; it fades by itself or at once when swirled.
+    if (flash.current && flashMat.current) {
+      const f = ctl.flashNow(now)
+      const b = ctl.indicator.baseColor
+      flashMat.current.color.setRGB(b.r / 255, b.g / 255, b.b / 255, THREE.SRGBColorSpace)
+      flashMat.current.opacity = Math.min(0.85, f)
+      flash.current.visible = f > 0.01
+      flash.current.position.y = liquidHeight(vol) - 0.06
+    }
+    // Swirling the flask: a short damped wobble.
+    if (flaskGroup.current) {
+      const age = (now - ctl.swirledAt.current) / 1000
+      const k = age >= 0 && age < 1.2 ? 1 - age / 1.2 : 0
+      flaskGroup.current.rotation.z = k > 0 ? 0.07 * Math.sin(age * 14) * k : 0
+      flaskGroup.current.rotation.x = k > 0 ? 0.07 * Math.cos(age * 14) * k : 0
+    }
     if (dropMesh.current) {
-      const now = performance.now()
       const surface = FLASK_Y + liquidHeight(vol)
       const drops = ctl.drops.current
       for (let i = 0; i < 40; i++) {
@@ -155,13 +174,18 @@ export function TitrationScene({ ctl, glass }: { ctl: TitrationController; glass
       </mesh>
 
       {/* Flask */}
-      <group position={[BURETTE_X, FLASK_Y, 0]}>
+      <group ref={flaskGroup} position={[BURETTE_X, FLASK_Y, 0]}>
         <mesh geometry={shellGeom}>
           <meshStandardMaterial color={glass} transparent opacity={0.2} depthWrite={false} side={THREE.DoubleSide} roughness={0.1} />
         </mesh>
         <mesh ref={liquid} renderOrder={1}>
           <latheGeometry args={[flaskProfile(0.3, 0.015), 48]} />
           <meshStandardMaterial ref={liquidMat} color="#eef2f6" transparent opacity={0.4} depthWrite={false} roughness={0.2} />
+        </mesh>
+        {/* Indicator colour flash under the burette tip */}
+        <mesh ref={flash} scale={[1, 0.45, 1]} renderOrder={2} visible={false}>
+          <sphereGeometry args={[0.16, 24, 12]} />
+          <meshBasicMaterial ref={flashMat} color="#de318c" transparent opacity={0} depthWrite={false} />
         </mesh>
       </group>
 

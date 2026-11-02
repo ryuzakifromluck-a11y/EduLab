@@ -319,6 +319,40 @@ export const QUIZZES: Record<string, QuizQuestionSource[]> = {
         ru: 'Индикатор меняет цвет в интервале около pKa ± 1. Бромтимоловый синий (pKa ≈ 7,1) меняет цвет прямо около pH 7, внутри резкого скачка кривой.',
       },
     },
+    {
+      id: 'fading-pink',
+      question: {
+        en: 'Near the end point, each drop of NaOH makes a pink patch in the flask that disappears when you swirl. What should you do?',
+        uz: 'Ekvivalentlik nuqtasiga yaqin har bir NaOH tomchisi kolbada pushti dogʻ hosil qiladi, chayqatganda u yoʻqoladi. Nima qilish kerak?',
+        ru: 'Вблизи конечной точки каждая капля NaOH даёт в колбе розовое пятно, которое исчезает при перемешивании. Что нужно делать?',
+      },
+      options: {
+        en: [
+          'Stop: the end point has been reached',
+          'Add the next drops one at a time, swirling after each, until the pink stays',
+          'Open the stopcock fully to finish faster',
+          'Add more phenolphthalein',
+        ],
+        uz: [
+          'Toʻxtash: ekvivalentlik nuqtasiga yetildi',
+          'Pushti rang saqlanib qolguncha tomchilarni birma-bir qoʻshib, har biridan keyin chayqatish',
+          'Tezroq tugatish uchun kranni toʻliq ochish',
+          'Koʻproq fenolftalein qoʻshish',
+        ],
+        ru: [
+          'Остановиться: конечная точка достигнута',
+          'Добавлять по одной капле и перемешивать после каждой, пока розовый цвет не сохранится',
+          'Полностью открыть кран, чтобы закончить быстрее',
+          'Добавить ещё фенолфталеина',
+        ],
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'Where a drop lands, the base is briefly in excess and the indicator turns pink. Swirling mixes it with the remaining acid and the colour goes. The end point is the first drop whose pink stays after swirling.',
+        uz: 'Tomchi tushgan joyda asos qisqa vaqt ortiqcha boʻladi va indikator pushti rangga kiradi. Chayqatilganda u qolgan kislota bilan aralashadi va rang yoʻqoladi. Ekvivalentlik nuqtasi — chayqatilgandan keyin ham pushti rangi saqlanadigan birinchi tomchi.',
+        ru: 'Там, где падает капля, основание на мгновение в избытке, и индикатор розовеет. При перемешивании оно смешивается с оставшейся кислотой, и окраска исчезает. Конечная точка — первая капля, после которой розовый цвет сохраняется при перемешивании.',
+      },
+    },
   ],
   // Ready for when these experiments ship; the card only appears on available experiment pages.
   'projectile-motion': [
@@ -2981,6 +3015,215 @@ export const QUIZZES: Record<string, QuizQuestionSource[]> = {
         en: 'M⁺• is the whole molecule minus one electron, so with charge 1+ its m/z equals the molar mass. 58 fits acetone, C₃H₆O.',
         uz: 'M⁺• bitta elektroni yoʻqolgan butun molekula, zaryadi 1+ boʻlgani uchun uning m/z qiymati molyar massaga teng. 58 aseton, C₃H₆O ga mos keladi.',
         ru: 'M⁺• — целая молекула без одного электрона, при заряде 1+ её m/z равно молярной массе. 58 соответствует ацетону C₃H₆O.',
+      },
+    },
+  ],
+  'sodium-water': [
+    {
+      id: 'gas',
+      question: {
+        en: 'Which gas is produced when sodium reacts with water?',
+        uz: 'Natriy suv bilan reaksiyaga kirishganda qaysi gaz ajraladi?',
+        ru: 'Какой газ выделяется при реакции натрия с водой?',
+      },
+      options: {
+        en: ['Oxygen', 'Hydrogen', 'Carbon dioxide', 'Chlorine'],
+        uz: ['Kislorod', 'Vodorod', 'Karbonat angidrid', 'Xlor'],
+        ru: ['Кислород', 'Водород', 'Углекислый газ', 'Хлор'],
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'Sodium takes the place of hydrogen in water: 2Na + 2H₂O → 2NaOH + H₂. The hydrogen fizzes off, and a lit splint makes it burn with a squeaky pop.',
+        uz: 'Natriy suvdagi vodorod oʻrnini egallaydi: 2Na + 2H₂O → 2NaOH + H₂. Vodorod vishillab ajraladi, yonib turgan choʻp uni „chiyillagan“ portlash bilan yondiradi.',
+        ru: 'Натрий замещает водород в воде: 2Na + 2H₂O → 2NaOH + H₂. Водород выделяется с шипением, а горящая лучинка поджигает его с характерным хлопком.',
+      },
+    },
+    {
+      id: 'exothermic',
+      question: {
+        en: 'The water warms up while the sodium reacts. What does this tell you about the reaction?',
+        uz: 'Natriy reaksiyaga kirishayotganda suv isiydi. Bu reaksiya haqida nimani bildiradi?',
+        ru: 'Пока натрий реагирует, вода нагревается. Что это говорит о реакции?',
+      },
+      options: {
+        en: ['It is endothermic: it takes in heat', 'It is exothermic: it releases heat', 'It is neither: the heat comes from friction', 'It is a physical change, not a reaction'],
+        uz: ['Endotermik: issiqlik yutadi', 'Ekzotermik: issiqlik chiqaradi', 'Hech biri emas: issiqlik ishqalanishdan', 'Bu reaksiya emas, fizik oʻzgarish'],
+        ru: ['Эндотермическая: поглощает теплоту', 'Экзотермическая: выделяет теплоту', 'Ни та ни другая: тепло от трения', 'Это физическое изменение, а не реакция'],
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'About 184 kJ is released per mole of sodium (ΔH < 0). The heat melts the sodium into a ball and warms the water; with enough heat the hydrogen ignites.',
+        uz: 'Har bir mol natriyga taxminan 184 kJ issiqlik ajraladi (ΔH < 0). Bu issiqlik natriyni sharchaga aylantirib eritadi va suvni isitadi; issiqlik yetarli boʻlsa, vodorod alangalanadi.',
+        ru: 'На моль натрия выделяется около 184 кДж (ΔH < 0). Теплота плавит натрий в шарик и нагревает воду; при достаточном нагреве водород загорается.',
+      },
+    },
+    {
+      id: 'equation',
+      question: {
+        en: 'Which is the balanced equation for the reaction?',
+        uz: 'Reaksiyaning toʻgʻri tenglashtirilgan tenglamasi qaysi?',
+        ru: 'Какое уравнение реакции уравнено правильно?',
+      },
+      options: {
+        en: ['Na + H₂O → NaOH + H₂', '2Na + 2H₂O → 2NaOH + H₂', '2Na + H₂O → Na₂O + H₂', 'Na + 2H₂O → NaOH₂ + H₂'],
+        uz: ['Na + H₂O → NaOH + H₂', '2Na + 2H₂O → 2NaOH + H₂', '2Na + H₂O → Na₂O + H₂', 'Na + 2H₂O → NaOH₂ + H₂'],
+        ru: ['Na + H₂O → NaOH + H₂', '2Na + 2H₂O → 2NaOH + H₂', '2Na + H₂O → Na₂O + H₂', 'Na + 2H₂O → NaOH₂ + H₂'],
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'Hydrogen gas is diatomic (H₂), so two water molecules must react, which needs two sodium atoms: 2Na + 2H₂O → 2NaOH + H₂. Both sides then have 2 Na, 4 H and 2 O.',
+        uz: 'Vodorod gazi ikki atomli (H₂), shuning uchun ikki molekula suv reaksiyaga kirishishi kerak, bu esa ikki natriy atomini talab qiladi: 2Na + 2H₂O → 2NaOH + H₂. Shunda ikkala tomonda 2 Na, 4 H va 2 O boʻladi.',
+        ru: 'Водород двухатомный (H₂), поэтому должны прореагировать две молекулы воды, а для них нужны два атома натрия: 2Na + 2H₂O → 2NaOH + H₂. Тогда в обеих частях по 2 Na, 4 H и 2 O.',
+      },
+    },
+    {
+      id: 'motion',
+      question: {
+        en: 'What does a piece of sodium do on the surface of the water?',
+        uz: 'Natriy boʻlakchasi suv yuzasida nima qiladi?',
+        ru: 'Что делает кусочек натрия на поверхности воды?',
+      },
+      options: {
+        en: ['It sinks to the bottom and dissolves slowly', 'It floats without moving', 'It melts into a ball and darts around rapidly', 'It turns the water blue'],
+        uz: ['Tubiga choʻkib, sekin eriydi', 'Qimirlamay suzib turadi', 'Sharchaga aylanib eriydi va tez-tez yuguradi', 'Suvni koʻk rangga boʻyaydi'],
+        ru: ['Тонет и медленно растворяется', 'Плавает неподвижно', 'Плавится в шарик и быстро мечется', 'Окрашивает воду в синий цвет'],
+      },
+      correctIndex: 2,
+      explanation: {
+        en: 'Sodium (0.97 g/cm³) is less dense than water, so it floats. The heat of the reaction melts it (melting point 98 °C), and the jet of hydrogen pushes the ball around the surface.',
+        uz: 'Natriyning zichligi (0,97 g/sm³) suvnikidan kichik, shuning uchun u suzadi. Reaksiya issiqligi uni eritadi (erish harorati 98 °C), vodorod oqimi esa sharchani suv yuzasida itarib yuradi.',
+        ru: 'Натрий (0,97 г/см³) легче воды, поэтому плавает. Теплота реакции его плавит (температура плавления 98 °C), а струя водорода толкает шарик по поверхности.',
+      },
+    },
+    {
+      id: 'phenolphthalein',
+      question: {
+        en: 'The water contained phenolphthalein. What colour does it turn, and why?',
+        uz: 'Suvda fenolftalein bor edi. U qanday rangga kiradi va nima uchun?',
+        ru: 'В воду добавили фенолфталеин. В какой цвет она окрасится и почему?',
+      },
+      options: {
+        en: ['Pink, because NaOH makes the solution basic', 'Red, because the solution becomes acidic', 'It stays colourless, because the solution is neutral', 'Yellow, because hydrogen is produced'],
+        uz: ['Pushti, chunki NaOH eritmani ishqoriy qiladi', 'Qizil, chunki eritma kislotali boʻladi', 'Rangsiz qoladi, chunki eritma neytral', 'Sariq, chunki vodorod ajraladi'],
+        ru: ['Розовый, потому что NaOH делает раствор щелочным', 'Красный, потому что раствор становится кислым', 'Остаётся бесцветным, потому что раствор нейтральный', 'Жёлтый, потому что выделяется водород'],
+      },
+      correctIndex: 0,
+      explanation: {
+        en: 'The product sodium hydroxide is a strong base (an alkali). Phenolphthalein is colourless below about pH 8.2 and pink above it, so pink streaks appear where the sodium has been.',
+        uz: 'Hosil boʻlgan natriy gidroksid kuchli asos (ishqor). Fenolftalein taxminan pH 8,2 dan past qiymatlarda rangsiz, undan yuqorida pushti, shuning uchun natriy oʻtgan joyda pushti izlar paydo boʻladi.',
+        ru: 'Образующийся гидроксид натрия — сильное основание (щёлочь). Фенолфталеин бесцветен примерно до pH 8,2 и розовый выше, поэтому там, где прошёл натрий, появляются розовые полосы.',
+      },
+    },
+  ],
+  'electrolysis-water': [
+    {
+      id: 'electrodes-gases',
+      question: {
+        en: 'In the electrolysis of water, which gas collects at the cathode (negative electrode)?',
+        uz: 'Suv elektrolizida katodda (manfiy elektrodda) qaysi gaz yigʻiladi?',
+        ru: 'Какой газ собирается на катоде (отрицательном электроде) при электролизе воды?',
+      },
+      options: {
+        en: ['Oxygen', 'Hydrogen', 'Chlorine', 'Water vapour'],
+        uz: ['Kislorod', 'Vodorod', 'Xlor', 'Suv bugʻi'],
+        ru: ['Кислород', 'Водород', 'Хлор', 'Водяной пар'],
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'The cathode gives electrons to water: 4H₂O + 4e⁻ → 2H₂ + 4OH⁻. Hydrogen forms at the cathode and oxygen at the anode, where water loses electrons.',
+        uz: 'Katod suvga elektron beradi: 4H₂O + 4e⁻ → 2H₂ + 4OH⁻. Vodorod katodda, kislorod esa suv elektron yoʻqotadigan anodda hosil boʻladi.',
+        ru: 'Катод отдаёт электроны воде: 4H₂O + 4e⁻ → 2H₂ + 4OH⁻. Водород образуется на катоде, а кислород — на аноде, где вода теряет электроны.',
+      },
+    },
+    {
+      id: 'ratio',
+      question: {
+        en: 'After a few minutes the hydrogen tube holds 24 mL of gas. About how much oxygen is in the other tube?',
+        uz: 'Bir necha daqiqadan soʻng vodorod nayida 24 mL gaz bor. Ikkinchi nayda taxminan qancha kislorod bor?',
+        ru: 'Через несколько минут в трубке с водородом 24 мл газа. Сколько примерно кислорода в другой трубке?',
+      },
+      options: {
+        en: ['6 mL', '12 mL', '24 mL', '48 mL'],
+        uz: ['6 mL', '12 mL', '24 mL', '48 mL'],
+        ru: ['6 мл', '12 мл', '24 мл', '48 мл'],
+      },
+      correctIndex: 1,
+      explanation: {
+        en: '2H₂O → 2H₂ + O₂: two molecules of hydrogen form for each molecule of oxygen. Equal amounts of gas take equal volumes, so the volumes are in a 2 : 1 ratio: 24 mL : 12 mL.',
+        uz: '2H₂O → 2H₂ + O₂: har bir kislorod molekulasiga ikki vodorod molekulasi toʻgʻri keladi. Gazlarning teng miqdorlari teng hajmni egallaydi, shuning uchun hajmlar 2 : 1 nisbatda: 24 mL : 12 mL.',
+        ru: '2H₂O → 2H₂ + O₂: на каждую молекулу кислорода образуются две молекулы водорода. Равные количества газа занимают равные объёмы, поэтому объёмы относятся как 2 : 1: 24 мл : 12 мл.',
+      },
+    },
+    {
+      id: 'electrolyte',
+      question: {
+        en: 'Why is a little sodium sulfate (or dilute sulfuric acid) added to the water?',
+        uz: 'Nima uchun suvga ozgina natriy sulfat (yoki suyultirilgan sulfat kislota) qoʻshiladi?',
+        ru: 'Зачем в воду добавляют немного сульфата натрия (или разбавленной серной кислоты)?',
+      },
+      options: {
+        en: ['To make the gases colourful', 'To provide ions so the water conducts electricity', 'Because sodium sulfate is broken down into the gases', 'To stop the electrodes from heating up'],
+        uz: ['Gazlarni rangli qilish uchun', 'Suv tok oʻtkazishi uchun ionlar berish maqsadida', 'Chunki natriy sulfat parchalanib gazlarni hosil qiladi', 'Elektrodlar qizib ketmasligi uchun'],
+        ru: ['Чтобы газы стали цветными', 'Чтобы дать ионы, без которых вода не проводит ток', 'Потому что газы получаются из сульфата натрия', 'Чтобы электроды не нагревались'],
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'Pure water contains very few ions and hardly conducts. The electrolyte’s ions carry the current through the solution but are not used up: the hydrogen and oxygen still come from the water.',
+        uz: 'Toza suvda ionlar juda kam va u tokni deyarli oʻtkazmaydi. Elektrolit ionlari eritma orqali tokni tashiydi, lekin sarflanmaydi: vodorod va kislorod baribir suvdan hosil boʻladi.',
+        ru: 'В чистой воде очень мало ионов, и она почти не проводит ток. Ионы электролита переносят заряд через раствор, но не расходуются: водород и кислород по-прежнему получаются из воды.',
+      },
+    },
+    {
+      id: 'electrode-material',
+      question: {
+        en: 'Why are platinum or graphite electrodes used rather than copper?',
+        uz: 'Nega mis emas, balki platina yoki grafit elektrodlar ishlatiladi?',
+        ru: 'Почему используют платиновые или графитовые электроды, а не медные?',
+      },
+      options: {
+        en: [
+          'They are inert: a copper anode would dissolve instead of making oxygen',
+          'Copper does not conduct electricity',
+          'Platinum and graphite make the reaction exothermic',
+          'Copper would turn the hydrogen blue',
+        ],
+        uz: [
+          'Ular inert: mis anod kislorod hosil qilish oʻrniga eriydi',
+          'Mis elektr tokini oʻtkazmaydi',
+          'Platina va grafit reaksiyani ekzotermik qiladi',
+          'Mis vodorodni koʻk rangga boʻyaydi',
+        ],
+        ru: [
+          'Они инертны: медный анод растворялся бы вместо выделения кислорода',
+          'Медь не проводит электрический ток',
+          'Платина и графит делают реакцию экзотермической',
+          'Медь окрасила бы водород в синий цвет',
+        ],
+      },
+      correctIndex: 0,
+      explanation: {
+        en: 'Copper is oxidised more easily than water, so at a copper anode Cu → Cu²⁺ + 2e⁻ happens instead of oxygen forming, and the solution turns blue. Inert electrodes only pass electrons.',
+        uz: 'Mis suvdan osonroq oksidlanadi, shuning uchun mis anodda kislorod oʻrniga Cu → Cu²⁺ + 2e⁻ jarayoni boradi va eritma koʻk rangga kiradi. Inert elektrodlar faqat elektronlarni uzatadi.',
+        ru: 'Медь окисляется легче воды, поэтому на медном аноде вместо выделения кислорода идёт Cu → Cu²⁺ + 2e⁻, и раствор синеет. Инертные электроды только передают электроны.',
+      },
+    },
+    {
+      id: 'tests',
+      question: {
+        en: 'How can you show that the gas at the anode is oxygen?',
+        uz: 'Anoddagi gaz kislorod ekanini qanday koʻrsatish mumkin?',
+        ru: 'Как доказать, что газ на аноде — кислород?',
+      },
+      options: {
+        en: ['It burns with a squeaky pop', 'It relights a glowing splint', 'It turns limewater milky', 'It bleaches damp litmus paper'],
+        uz: ['U chiyillagan portlash bilan yonadi', 'U choʻgʻlangan choʻpni alangalantiradi', 'U ohakli suvni loyqalantiradi', 'U nam lakmus qogʻozini oqartiradi'],
+        ru: ['Он сгорает с хлопком', 'Он заставляет вспыхнуть тлеющую лучинку', 'Он мутит известковую воду', 'Он обесцвечивает влажную лакмусовую бумажку'],
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'Oxygen supports combustion, so a glowing splint bursts into flame. The squeaky pop is the test for hydrogen, limewater tests carbon dioxide and bleaching tests chlorine.',
+        uz: 'Kislorod yonishni quvvatlaydi, shuning uchun choʻgʻlangan choʻp alangalanadi. Chiyillagan portlash vodorodga, ohakli suv karbonat angidridga, oqartirish esa xlorga sinovdir.',
+        ru: 'Кислород поддерживает горение, поэтому тлеющая лучинка вспыхивает. Хлопок — проба на водород, известковая вода — на углекислый газ, обесцвечивание — на хлор.',
       },
     },
   ],

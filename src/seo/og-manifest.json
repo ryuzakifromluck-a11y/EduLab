@@ -39,6 +39,10 @@
     "input": "465a45de17a0",
     "png": "983746416a22"
   },
+  "electrolysis-water": {
+    "input": "0f999656e529",
+    "png": "e8465a63a73c"
+  },
   "electromagnetic-induction": {
     "input": "e1132453ea8d",
     "png": "8add38e99611"
@@ -126,6 +130,10 @@
   "simple-harmonic-motion": {
     "input": "c3395d14e8ad",
     "png": "5aad13a25f30"
+  },
+  "sodium-water": {
+    "input": "7c37d6639f01",
+    "png": "773c958623df"
   },
   "solubility": {
     "input": "20d9cfcabd76",

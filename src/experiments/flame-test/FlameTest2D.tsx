@@ -16,8 +16,8 @@ export function FlameTest2D({ ctl, label }: { ctl: FlameTestController; label: s
     <svg viewBox="0 0 420 320" className="h-full max-h-[460px] w-full" role="img" aria-label={label}>
       <rect x="140" y="180" width="20" height="90" fill="var(--muted)" />
       <rect x="110" y="268" width="80" height="12" rx="3" fill="var(--muted)" />
-      <path d={`M150 180 C120 ${180 - h * 0.4} 140 ${180 - h * 0.8} 150 ${180 - h} C160 ${180 - h * 0.8} 180 ${180 - h * 0.4} 150 180 Z`} fill={ctl.color.hex} opacity={0.55 + 0.4 * s} />
-      <path d="M150 180 C140 160 145 150 150 140 C155 150 160 160 150 180 Z" fill="#9db5ff" opacity="0.8" />
+      <path d={`M150 180 C120 ${180 - h * 0.4} 140 ${180 - h * 0.8} 150 ${180 - h} C160 ${180 - h * 0.8} 180 ${180 - h * 0.4} 150 180 Z`} fill={ctl.color.hex} opacity={ctl.lit ? 0.55 + 0.4 * s : 0} />
+      <path d="M150 180 C140 160 145 150 150 140 C155 150 160 160 150 180 Z" fill="#9db5ff" opacity={ctl.lit ? 0.8 : 0} />
       {ctl.inFlame && <path d="M60 120 L140 128" stroke="#c9ced6" strokeWidth="3" />}
       {ctl.cobaltGlass && <rect x="105" y="40" width="90" height="150" fill="#1f3fbf" opacity="0.3" />}
       {/* spectroscope */}

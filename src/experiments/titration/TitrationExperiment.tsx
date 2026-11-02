@@ -1,5 +1,5 @@
-import { AlertTriangle, Droplet, Droplets, Pipette } from 'lucide-react'
-import { useMemo } from 'react'
+import { AlertTriangle, Droplet, Droplets, Pipette, RefreshCw } from 'lucide-react'
+import { useMemo, useRef } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import {
   CartesianGrid,
@@ -29,12 +29,28 @@ import { fmt, fmtSig } from '../../lib/format'
 import { BURETTE_CAPACITY, DROP_VOLUME, SPEEDS, useTitration } from './useTitration'
 import { TitrationScene } from './TitrationScene'
 import { Titration2D } from './Titration2D'
+import { SoundControls } from '../../components/chemistry/SoundControls'
+import { useChemSound } from '../../lib/chemistry/useChemSound'
 
 const INDICATOR_IDS = Object.keys(INDICATORS) as IndicatorId[]
 
 export default function TitrationExperiment() {
   const { t } = useTranslation()
-  const x = useTitration()
+  const sound = useChemSound(['drip', 'swirl'])
+  // A soft "plink" per drop, at most ~12 per second when the stopcock is wide open.
+  const lastDrip = useRef(0)
+  const x = useTitration({
+    onDrop: () => {
+      const now = performance.now()
+      if (now - lastDrip.current < 80) return
+      lastDrip.current = now
+      sound.play('drip', { rate: 0.9 + Math.random() * 0.2 })
+    },
+  })
+  const swirl = () => {
+    x.swirl()
+    sound.play('swirl')
+  }
   const c = useChartTheme()
   const dark = useUi((s) => s.theme) === 'dark'
   const experiment = findExperiment('chemistry', 'titration')!
@@ -78,8 +94,10 @@ export default function TitrationExperiment() {
       id: 'ind',
       label: t('exp.titration.m.indicator'),
       value: t(`exp.titration.colorState.${x.colorState}`),
-      sub:
-        x.endPoint.volume !== null
+      tone: x.indicatorPhase === 'endPoint' ? 'accent' : 'default',
+      sub: x.indicatorPhase === 'flash'
+        ? t('exp.titration.m.flash')
+        : x.endPoint.volume !== null
           ? t('exp.titration.m.endPoint', { value: fmt(x.endPoint.volume, 2) })
           : t('exp.titration.m.noEndPoint'),
     },
@@ -323,6 +341,10 @@ export default function TitrationExperiment() {
         <Pipette className={large ? 'h-6 w-6' : 'h-4 w-4'} aria-hidden />
         +1 mL
       </Button>
+      <Button variant="secondary" onClick={swirl} className={large ? 'h-16 px-6 text-xl' : ''}>
+        <RefreshCw className={large ? 'h-6 w-6' : 'h-4 w-4'} aria-hidden />
+        {t('exp.titration.swirl')}
+      </Button>
     </div>
   )
 
@@ -334,6 +356,12 @@ export default function TitrationExperiment() {
       <SelectField label={t('exp.titration.p.indicator')} value={x.indicatorId} options={indicatorOptions} onChange={x.setIndicatorId} />
       <ParamSlider label={t('exp.titration.p.added')} value={x.addedVolume} min={0} max={BURETTE_CAPACITY} step={0.05} unit="mL" format={(v) => fmt(v, 2)} onChange={x.setAddedVolume} accent={accent} />
       {dripButtons()}
+      {x.indicatorPhase === 'flash' && (
+        <p role="status" className="rounded-xl bg-surface-2 p-3 text-xs leading-relaxed text-muted">
+          {t('exp.titration.flashHint')}
+        </p>
+      )}
+      <SoundControls />
       <div className="rounded-xl bg-surface-2 p-3 text-xs leading-relaxed text-muted">
         <p className="font-semibold text-ink">{t('exp.titration.reaction')}</p>
         <p className="mt-1 text-sm text-ink">HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)</p>

@@ -1,5 +1,5 @@
-import { Check, Droplets, Flame, Shuffle, X as XIcon } from 'lucide-react'
-import { useMemo } from 'react'
+import { Check, Droplets, Flame, FlameKindling, Shuffle, X as XIcon } from 'lucide-react'
+import { useEffect, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Scatter, Tooltip, XAxis, YAxis } from 'recharts'
 import { findExperiment } from '../../data/experiments'
@@ -16,6 +16,8 @@ import { CHART_MARGIN, OverlayNote, axisLabels } from '../shared/lab'
 import { SPEEDS, useFlameTest, type SampleId } from './useFlameTest'
 import { FlameTestScene } from './FlameTestScene'
 import { FlameTest2D } from './FlameTest2D'
+import { SoundControls } from '../../components/chemistry/SoundControls'
+import { useChemSound } from '../../lib/chemistry/useChemSound'
 
 const P = 'exp.flame-test'
 const REFERENCE = METAL_IDS.map((id) => ({ id, hex: flameColor({ [id]: 1 }).hex, rgb: flameColor({ [id]: 1 }).rgb }))
@@ -32,6 +34,25 @@ const ENERGY_CURVE = Array.from({ length: 81 }, (_, i) => {
 export default function FlameTestExperiment() {
   const { t } = useTranslation()
   const x = useFlameTest()
+  const sound = useChemSound(['match', 'fire', 'sizzle', 'glass-clink'])
+  const { play, loop } = sound
+  // Striking a match lights the burner; it then roars quietly while lit.
+  useEffect(() => {
+    if (x.lit) play('match')
+  }, [x.lit, play])
+  useEffect(() => loop('fire', x.lit, { volume: 0.5 }), [x.lit, loop])
+  const dip = () => {
+    x.dip()
+    play('sizzle')
+  }
+  const clean = () => {
+    x.clean()
+    play('sizzle', 0.4)
+  }
+  const newUnknown = () => {
+    x.newUnknown()
+    play('glass-clink')
+  }
   const c = useChartTheme()
   const experiment = findExperiment('chemistry', 'flame-test')!
   const accent = c.chemistry
@@ -155,11 +176,11 @@ export default function FlameTestExperiment() {
 
   const actions = (large = false) => (
     <div className="flex flex-wrap gap-2">
-      <Button variant="secondary" onClick={x.clean} className={large ? 'h-14 px-5 text-lg' : 'flex-1'}>
+      <Button variant="secondary" onClick={clean} className={large ? 'h-14 px-5 text-lg' : 'flex-1'}>
         <Droplets className="h-4 w-4" aria-hidden />
         {t(`${P}.clean`)}
       </Button>
-      <Button variant="primary" onClick={x.dip} className={large ? 'h-14 px-5 text-lg' : 'flex-1'}>
+      <Button variant="primary" onClick={dip} className={large ? 'h-14 px-5 text-lg' : 'flex-1'}>
         <Flame className="h-4 w-4" aria-hidden />
         {t(`${P}.dip`)}
       </Button>
@@ -177,6 +198,12 @@ export default function FlameTestExperiment() {
   const controls = (
     <>
       {sampleSelect}
+      {!x.lit && (
+        <Button variant="secondary" onClick={x.light} className="w-full">
+          <FlameKindling className="h-4 w-4" aria-hidden />
+          {t(`${P}.light`)}
+        </Button>
+      )}
       {actions()}
       <Toggle label={t(`${P}.p.cobalt`)} description={t(`${P}.p.cobaltHint`)} checked={x.cobaltGlass} onChange={x.setCobaltGlass} />
       <div className="flex flex-col gap-2 rounded-xl bg-surface-2 p-3">
@@ -190,7 +217,7 @@ export default function FlameTestExperiment() {
             <Check className="h-4 w-4" aria-hidden />
             {t(`${P}.identify.check`)}
           </Button>
-          <Button variant="ghost" onClick={x.newUnknown} aria-label={t(`${P}.identify.new`)}>
+          <Button variant="ghost" onClick={newUnknown} aria-label={t(`${P}.identify.new`)}>
             <Shuffle className="h-4 w-4" aria-hidden />
           </Button>
         </div>
@@ -201,6 +228,7 @@ export default function FlameTestExperiment() {
           </p>
         )}
       </div>
+      <SoundControls />
       <div className="rounded-xl bg-surface-2 p-3">
         <p className="text-sm font-medium text-ink">{t(`${P}.reference`)}</p>
         <ul className="mt-2 grid grid-cols-2 gap-1.5 text-xs text-muted">
@@ -255,7 +283,7 @@ export default function FlameTestExperiment() {
       charts={<ChartTabs charts={charts} />}
       presenterChart={charts[0].render(charts[0].data)}
       formula={<FormulaExplorer formulas={formulas} />}
-      keys={{ running: x.inFlame, togglePlay: x.togglePlay, reset: x.reset, increase: x.dip }}
+      keys={{ running: x.inFlame, togglePlay: x.togglePlay, reset: x.reset, increase: dip }}
       guide={{
         instructions: [1, 2, 3, 4, 5].map((i) => t(`${P}.guide.step${i}`)),
         science: (
