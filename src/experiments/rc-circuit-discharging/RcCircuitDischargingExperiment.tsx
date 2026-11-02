@@ -16,6 +16,7 @@ import { CHART_MARGIN, OverlayNote, RecordBox, axisLabels } from '../shared/lab'
 import { SPEEDS, useRcCircuitDischarging } from './useRcCircuitDischarging'
 import { RcCircuitDischargingScene } from './RcCircuitDischargingScene'
 import { RcCircuitDischarging2D } from './RcCircuitDischarging2D'
+import { applySharedSettings, num } from '../../lib/sharedSettings'
 
 const P = 'exp.rc-circuit-discharging'
 
@@ -262,6 +263,9 @@ export default function RcCircuitDischargingExperiment() {
   return (
     <ExperimentShell
       experiment={experiment}
+      applySettings={(s) =>
+        applySharedSettings(s, { voltage: num(h.V0, 1, 12, h.setV0), resistance: num(h.Rk, 1, 100, h.setRk), capacitance: num(h.CuF, 100, 2200, h.setCuF) })
+      }
       progressSettings={{ voltage: h.V0, resistance: h.Rk, capacitance: h.CuF }}
       viewport={viewport}
       controls={controls}

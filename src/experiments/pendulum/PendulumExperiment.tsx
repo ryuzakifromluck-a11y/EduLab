@@ -14,6 +14,7 @@ import { GRAVITY_PRESETS, SPEEDS, usePendulum } from './usePendulum'
 import { PendulumScene } from './PendulumScene'
 import { Pendulum2D } from './Pendulum2D'
 import { clsx } from 'clsx'
+import { applySharedSettings, num } from '../../lib/sharedSettings'
 
 const LENGTHS = Array.from({ length: 30 }, (_, i) => +(0.1 + i * 0.1).toFixed(2))
 
@@ -276,6 +277,7 @@ export default function PendulumExperiment() {
   return (
     <ExperimentShell
       experiment={experiment}
+      applySettings={(s) => applySharedSettings(s, { length: num(p.length, 0.2, 3, p.setLength), angleDeg: num(p.angleDeg, 1, 170, p.setAngle), gravity: num(p.gravity, 0.5, 25, p.setGravity) })}
       progressSettings={{ length: p.length, angleDeg: p.angleDeg, gravity: p.gravity }}
       viewport={viewport}
       controls={controls}
