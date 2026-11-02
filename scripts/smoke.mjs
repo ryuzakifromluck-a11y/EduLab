@@ -102,7 +102,7 @@ const checks = [
             expect(res.status === 200, `HTTP ${res.status}`)
             const json = JSON.parse(body)
             expect(json.ok === true, 'ok is not true')
-            return `release ${json.release}, tutor ${json.tutorConfigured ? 'configured' : 'not configured'}`
+            return `release ${json.release}, tutor ${json.tutorConfigured ? 'configured' : 'not configured'}, analytics ${json.analyticsConfigured ? 'configured' : 'not configured'}`
           },
         ],
       ]),
@@ -114,6 +114,21 @@ const checks = [
       const { res, body } = await request(`${site}/api/tutor`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' })
       if (res.status === 503 && body.includes('not_configured')) return 'deployed, AI_API_KEY not set'
       expect(res.status === 400, `HTTP ${res.status}, expected 400`)
+    },
+  ],
+  [
+    'Analytics function is deployed',
+    async () => {
+      if (preview) return 'skipped (no Functions in vite preview)'
+      // 200 with stats, or our own 503 JSON when DATABASE_URL is missing or the database is down
+      // (the site then shows demo data). A 404 or an HTML page means the function was not deployed.
+      const { res, body } = await request(`${site}/api/analytics/impact`, { headers: { accept: 'application/json' } })
+      if (res.status === 503 && body.includes('not_configured')) return 'deployed, DATABASE_URL not set (site shows demo data)'
+      if (res.status === 503 && body.includes('unavailable')) throw new Error('database unreachable or migration 003 not applied (site shows demo data)')
+      expect(res.status === 200, `HTTP ${res.status}, expected 200`)
+      const json = JSON.parse(body)
+      expect(typeof json.totalSessions === 'number', 'totalSessions missing')
+      return `${json.totalSessions} sessions recorded`
     },
   ],
   [
