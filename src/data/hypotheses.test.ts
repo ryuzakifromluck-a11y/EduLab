@@ -247,6 +247,23 @@ describe('hypothesis specs for the other chemistry experiments', () => {
     expect(effect('weak-base-strong-acid-titration', 'baseVolume', 'startPh')).toBe('same')
   })
 
+  it('sodium in water: more metal → more hydrogen and heat; more water → smaller temperature rise', () => {
+    expect(effect('sodium-water', 'mass', 'hydrogen')).toBe('increase')
+    expect(effect('sodium-water', 'mass', 'tempRise')).toBe('increase')
+    expect(effect('sodium-water', 'mass', 'ph')).toBe('increase')
+    expect(effect('sodium-water', 'waterVolume', 'tempRise')).toBe('decrease')
+    expect(effect('sodium-water', 'initialTemp', 'hydrogen')).toBe('same')
+  })
+
+  it('electrolysis: higher voltage or stronger electrolyte → more current and gas, hydrogen twice oxygen', () => {
+    expect(effect('electrolysis-water', 'voltage', 'current')).toBe('increase')
+    expect(effect('electrolysis-water', 'concentration', 'hydrogenRate')).toBe('increase')
+    const spec = hypothesisSpec('electrolysis-water')!
+    const v = spec.evaluate(spec.defaults)
+    expect(v.hydrogenRate / v.oxygenRate).toBeCloseTo(2, 6)
+    expect(spec.evaluate({ ...spec.defaults, voltage: 1 }).current).toBe(0)
+  })
+
   it('flame test: longer wavelength → lower photon energy', () => {
     expect(effect('flame-test', 'wavelength', 'photonEnergy')).toBe('decrease')
     const spec = hypothesisSpec('flame-test')!

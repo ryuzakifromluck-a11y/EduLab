@@ -108,14 +108,14 @@ export const EXPERIMENTS: Experiment[] = [
   { id: 'dilution', subject: 'chemistry', category: 'solutions', difficulty: 'beginner', duration: 15, status: 'available', order: 14, illustration: 'beaker', hasHypothesis: true },
   { id: 'chemical-equilibrium', subject: 'chemistry', category: 'reactions', difficulty: 'advanced', duration: 30, status: 'available', order: 15, illustration: 'equilibrium', hasHypothesis: true },
   // Chemistry — organic, analytical and inorganic (PraxiLabs-inspired set)
-  { id: 'diels-alder-reaction', subject: 'chemistry', category: 'organicChemistry', difficulty: 'advanced', duration: 30, status: 'available', order: 16, illustration: 'flask' },
-  { id: 'synthesis-of-aspirin', subject: 'chemistry', category: 'organicChemistry', difficulty: 'intermediate', duration: 30, status: 'available', order: 17, illustration: 'flask' },
-  { id: 'weak-base-strong-acid-titration', subject: 'chemistry', category: 'analyticalChemistry', difficulty: 'intermediate', duration: 25, status: 'available', order: 18, illustration: 'titration' },
-  { id: 'flame-test', subject: 'chemistry', category: 'inorganicChemistry', difficulty: 'beginner', duration: 10, status: 'available', order: 19, illustration: 'flask' },
-  { id: 'gc-ms-analysis', subject: 'chemistry', category: 'analyticalChemistry', difficulty: 'advanced', duration: 30, status: 'available', order: 20, illustration: 'flask' },
+  { id: 'diels-alder-reaction', subject: 'chemistry', category: 'organicChemistry', difficulty: 'advanced', duration: 30, status: 'available', order: 16, illustration: 'flask', hasHypothesis: true },
+  { id: 'synthesis-of-aspirin', subject: 'chemistry', category: 'organicChemistry', difficulty: 'intermediate', duration: 30, status: 'available', order: 17, illustration: 'flask', hasHypothesis: true },
+  { id: 'weak-base-strong-acid-titration', subject: 'chemistry', category: 'analyticalChemistry', difficulty: 'intermediate', duration: 25, status: 'available', order: 18, illustration: 'titration', hasHypothesis: true },
+  { id: 'flame-test', subject: 'chemistry', category: 'inorganicChemistry', difficulty: 'beginner', duration: 10, status: 'available', order: 19, illustration: 'flask', hasHypothesis: true },
+  { id: 'gc-ms-analysis', subject: 'chemistry', category: 'analyticalChemistry', difficulty: 'advanced', duration: 30, status: 'available', order: 20, illustration: 'flask', hasHypothesis: true },
   // Chemistry — reactions of metals and electrochemistry
-  { id: 'sodium-water', subject: 'chemistry', category: 'inorganicChemistry', difficulty: 'intermediate', duration: 10, status: 'available', order: 21, illustration: 'beaker' },
-  { id: 'electrolysis-water', subject: 'chemistry', category: 'reactions', difficulty: 'intermediate', duration: 20, status: 'available', order: 22, illustration: 'circuit' },
+  { id: 'sodium-water', subject: 'chemistry', category: 'inorganicChemistry', difficulty: 'intermediate', duration: 10, status: 'available', order: 21, illustration: 'beaker', hasHypothesis: true },
+  { id: 'electrolysis-water', subject: 'chemistry', category: 'reactions', difficulty: 'intermediate', duration: 20, status: 'available', order: 22, illustration: 'circuit', hasHypothesis: true },
   // Biology — molecular biology and genetics
   { id: 'dna-extraction', subject: 'biology', category: 'molecularBiology', difficulty: 'beginner', duration: 20, status: 'available', featured: true, order: 1, illustration: 'flask', hasHypothesis: true },
   { id: 'pcr', subject: 'biology', category: 'genetics', difficulty: 'intermediate', duration: 25, status: 'available', order: 2, illustration: 'flask', hasHypothesis: true },

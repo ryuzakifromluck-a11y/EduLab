@@ -3427,6 +3427,8 @@ const uz = {
       'dna-extraction': { yield: 'Tayoqchaga oʻralgan DNK', released: 'Parchalangan hujayralar ulushi', purity: 'Tozalik A260/A280' },
       pcr: { product: 'DNK mahsuloti', efficiency: 'Bir siklning oʻrtacha samaradorligi', nonspecific: 'Nospesifik mahsulotlar' },
       'gel-electrophoresis': { smallBand: '200 bp polosa bosib oʻtgan masofa', largeBand: '3000 bp polosa bosib oʻtgan masofa', field: 'Maydon kuchlanganligi' },
+      'sodium-water': { hydrogen: 'Ajralgan vodorod', ph: 'Eritmaning pH qiymati', tempRise: 'Suv haroratining koʻtarilishi' },
+      'electrolysis-water': { current: 'Tok kuchi', hydrogenRate: 'Bir daqiqada hosil boʻladigan vodorod', oxygenRate: 'Bir daqiqada hosil boʻladigan kislorod' },
     },
     variables: {
       'ph-indicators': { pH: 'Namunaning pH qiymati' },

@@ -12,6 +12,7 @@ import * as density from '../engines/densityMeasurement'
 import * as dielsAlder from '../engines/dielsAlderReaction'
 import * as dilution from '../engines/dilution'
 import * as dna from '../engines/dnaExtraction'
+import * as electrolysis from '../engines/electrolysisWater'
 import * as energy from '../engines/energyConservation'
 import * as equilibrium from '../engines/equilibrium'
 import * as flame from '../engines/flameTest'
@@ -28,6 +29,7 @@ import * as optics from '../engines/optics'
 import * as pcr from '../engines/pcr'
 import * as rcCharge from '../engines/rcCircuitCharging'
 import * as rcDischarge from '../engines/rcCircuitDischarging'
+import * as sodium from '../engines/sodiumWater'
 import * as solubility from '../engines/solubility'
 import * as aspirin from '../engines/synthesisOfAspirin'
 import * as weakBase from '../engines/weakBaseStrongAcidTitration'
@@ -717,6 +719,48 @@ const gelElectrophoresis: HypothesisSpec = {
   },
 }
 
+const sodiumWater: HypothesisSpec = {
+  experimentId: 'sodium-water',
+  variables: [
+    { id: 'mass', labelKey: 'exp.sodium-water.p.mass', unit: 'g', min: 0.05, max: 1, digits: 2 },
+    { id: 'waterVolume', labelKey: 'exp.sodium-water.p.water', unit: 'mL', min: 50, max: 250, digits: 0 },
+    { id: 'initialTemp', labelKey: 'exp.sodium-water.p.temp', unit: '°C', min: 5, max: 50, digits: 0 },
+  ],
+  outcomes: [out('sodium-water', 'hydrogen', 'mL', 1), out('sodium-water', 'ph', '', 2), out('sodium-water', 'tempRise', '°C', 2)],
+  defaults: { metal: 'Na', mass: 0.25, waterVolume: 100, initialTemp: 20 },
+  evaluate: (s) => {
+    const p = { metal: str<sodium.AlkaliMetal>(s, 'metal', 'Na'), mass: n(s, 'mass'), waterVolume: Math.max(1, n(s, 'waterVolume')), initialTemp: n(s, 'initialTemp'), beakerRadius: 3.4 }
+    const moles = sodium.totalMoles(p)
+    return {
+      hydrogen: sodium.hydrogenVolume(moles),
+      ph: sodium.solutionPH(moles, p.waterVolume),
+      tempRise: sodium.finalTemperature(p) - p.initialTemp,
+    }
+  },
+}
+
+const electrolysisWater: HypothesisSpec = {
+  experimentId: 'electrolysis-water',
+  variables: [
+    { id: 'voltage', labelKey: 'exp.electrolysis-water.p.voltage', unit: 'V', min: 0, max: 12, digits: 1 },
+    { id: 'concentration', labelKey: 'exp.electrolysis-water.p.concentration', unit: 'mol/L', min: 0.05, max: 1, digits: 2 },
+  ],
+  outcomes: [out('electrolysis-water', 'current', 'A', 3), out('electrolysis-water', 'hydrogenRate', 'mL/min', 2), out('electrolysis-water', 'oxygenRate', 'mL/min', 2)],
+  defaults: { voltage: 6, electrolyte: 'na2so4', concentration: 0.5, electrode: 'platinum' },
+  evaluate: (s) => {
+    const electrode = str<electrolysis.ElectrodeMaterial>(s, 'electrode', 'platinum')
+    const p = { voltage: n(s, 'voltage'), electrolyte: str<electrolysis.Electrolyte>(s, 'electrolyte', 'na2so4'), concentration: n(s, 'concentration'), electrode }
+    const I = electrolysis.current(p)
+    // Theoretical gas per minute from Faraday's law (losses to dissolution fade once the water is saturated).
+    const mol = electrolysis.faraday(I * 60)
+    return {
+      current: I,
+      hydrogenRate: electrolysis.mmolToMl(mol.H2 * 1000),
+      oxygenRate: electrolysis.ELECTRODES[electrode].inertAnode ? electrolysis.mmolToMl(mol.O2 * 1000) : 0,
+    }
+  },
+}
+
 export const HYPOTHESIS_SPECS: Record<string, HypothesisSpec> = Object.fromEntries(
   [
     // Physics
@@ -750,6 +794,8 @@ export const HYPOTHESIS_SPECS: Record<string, HypothesisSpec> = Object.fromEntri
     weakBaseTitration,
     flameTest,
     gcMsAnalysis,
+    sodiumWater,
+    electrolysisWater,
     // Biology
     dnaExtraction,
     pcr_,

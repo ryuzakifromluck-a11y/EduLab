@@ -3424,6 +3424,8 @@ const en = {
       'dna-extraction': { yield: 'DNA spooled', released: 'Share of cells broken open', purity: 'Purity A260/A280' },
       pcr: { product: 'DNA product', efficiency: 'Average efficiency per cycle', nonspecific: 'Non-specific products' },
       'gel-electrophoresis': { smallBand: 'Distance moved by a 200 bp band', largeBand: 'Distance moved by a 3000 bp band', field: 'Field strength' },
+      'sodium-water': { hydrogen: 'Hydrogen given off', ph: 'pH of the solution', tempRise: 'Rise in water temperature' },
+      'electrolysis-water': { current: 'Current', hydrogenRate: 'Hydrogen produced per minute', oxygenRate: 'Oxygen produced per minute' },
     },
     variables: {
       'ph-indicators': { pH: 'pH of the sample' },

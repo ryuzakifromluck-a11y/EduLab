@@ -3497,6 +3497,8 @@ const ru = {
       'dna-extraction': { yield: 'Намотанная ДНК', released: 'Доля разрушенных клеток', purity: 'Чистота A260/A280' },
       pcr: { product: 'Продукт ДНК', efficiency: 'Средняя эффективность цикла', nonspecific: 'Неспецифические продукты' },
       'gel-electrophoresis': { smallBand: 'Путь полосы 200 п. н.', largeBand: 'Путь полосы 3000 п. н.', field: 'Напряжённость поля' },
+      'sodium-water': { hydrogen: 'Выделившийся водород', ph: 'pH раствора', tempRise: 'Нагрев воды' },
+      'electrolysis-water': { current: 'Сила тока', hydrogenRate: 'Водород за минуту', oxygenRate: 'Кислород за минуту' },
     },
     variables: {
       'ph-indicators': { pH: 'pH образца' },
