@@ -18,6 +18,6 @@
     "types": ["node"]
   },
   "include": ["server"],
-  // The AI tutor and monitoring backends run inside Vite / Vercel Functions, not plain Node; tsconfig.node.json checks them.
-  "exclude": ["server/tutor", "server/monitoring"]
+  // The AI tutor, monitoring and analytics backends run inside Vite / Vercel Functions, not plain Node; tsconfig.node.json checks them.
+  "exclude": ["server/tutor", "server/monitoring", "server/analytics"]
 }

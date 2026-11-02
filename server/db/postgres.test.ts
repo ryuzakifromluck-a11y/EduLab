@@ -17,7 +17,7 @@ describe('databaseConfig', () => {
 
   it('creates every table and index the API needs', () => {
     const sql = loadMigrations().map((m) => m.sql).join('\n')
-    for (const t of ['users', 'progress', 'sessions', 'remote_sessions']) expect(sql).toContain(`CREATE TABLE ${t} (`)
+    for (const t of ['users', 'progress', 'sessions', 'remote_sessions', 'analytics_counters']) expect(sql).toContain(`CREATE TABLE ${t} (`)
     expect(sql).toMatch(/UNIQUE INDEX users_email_key ON users \(lower\(email\)\)/)
     expect(sql).toMatch(/INDEX progress_experiment_id_idx ON progress \(experiment_id\)/)
   })
@@ -45,7 +45,7 @@ describe.skipIf(!TEST_DATABASE_URL)('PostgreSQL', () => {
     expect(await pendingMigrations(pool)).toEqual([])
     expect(await migrate(pool)).toEqual([])
     const { rows } = await pool.query(`SELECT tablename FROM pg_tables WHERE schemaname = $1 ORDER BY 1`, [db.schema])
-    expect(rows.map((r) => r.tablename)).toEqual(['hypotheses', 'progress', 'remote_sessions', 'schema_migrations', 'sessions', 'users'])
+    expect(rows.map((r) => r.tablename)).toEqual(['analytics_counters', 'hypotheses', 'progress', 'remote_sessions', 'schema_migrations', 'sessions', 'users'])
   })
 
   it('enforces unique emails case-insensitively', async () => {
