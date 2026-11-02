@@ -2913,6 +2913,7 @@ const en = {
       },
     },
     'flame-test': {
+      light: 'Light the burner',
       p: {
         sample: 'Salt sample',
         cobalt: 'Look through cobalt-blue glass',

@@ -22,6 +22,10 @@ export function useFlameTest() {
   const [guess, setGuess] = useState<MetalId>('Na')
   const [verdict, setVerdict] = useState<'correct' | 'wrong' | null>(null)
   const [cleaned, setCleaned] = useState(true)
+  /** The Bunsen burner starts unlit; dipping or pressing play lights it. */
+  const [lit, setLit] = useState(false)
+  /** Counts dips, so the scene can replay the burst of sparks for each one. */
+  const [dips, setDips] = useState(0)
   const load = useRef<Mixture>({})
   const [, force] = useState(0)
 
@@ -64,15 +68,23 @@ export function useFlameTest() {
       const traces = Object.keys(load.current).length > 0
       load.current = { ...load.current, [metal]: 1 }
       setCleaned(!traces)
+      setLit(true)
       setInFlame(true)
+      setDips((d) => d + 1)
       force((n) => n + 1)
     },
+    lit,
+    light: () => setLit(true),
+    dips,
     clean,
     cleaned,
     loaded: Object.keys(load.current) as MetalId[],
     loadAmount: (id: MetalId) => load.current[id] ?? 0,
     inFlame,
-    togglePlay: () => setInFlame((f) => !f),
+    togglePlay: () => {
+      setLit(true)
+      setInFlame((f) => !f)
+    },
     reset: () => {
       clean()
       setVerdict(null)

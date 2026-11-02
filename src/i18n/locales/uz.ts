@@ -2916,6 +2916,7 @@ const uz = {
       },
     },
     'flame-test': {
+      light: 'Gorelkani yoqish',
       p: {
         sample: 'Tuz namunasi',
         cobalt: 'Kobalt-koʻk shisha orqali qarash',

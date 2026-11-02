@@ -1,8 +1,10 @@
 import { useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
-import { METALS, METAL_IDS } from '../../engines/flameTest'
+import { METAL_IDS } from '../../engines/flameTest'
 import { Label3D } from '../../components/lab/Label3D'
+import { ChemSubstance } from '../../components/chemistry/ChemSubstance'
+import { ReactionEffect } from '../../components/chemistry/ReactionEffect'
 import { Bench, LabLights } from '../shared/three'
 import type { FlameTestController } from './useFlameTest'
 
@@ -11,6 +13,8 @@ const FLAME_Y = 1.25
 const REST = new THREE.Vector3(-1.2, 1.2, 0.9)
 const IN_FLAME = new THREE.Vector3(BURNER_X, FLAME_Y + 0.35, 0)
 const SALT_COLOR: Record<string, string> = { Cu: '#3fa9a1' }
+/** Reagent block from the substance catalog for each salt. */
+const SALT_BLOCK: Record<string, string> = { Na: 'nacl', K: 'kcl', Ca: 'cacl2', Ba: 'bacl2', Cu: 'cucl2', Sr: 'srcl2' }
 
 /** Bunsen burner with a nichrome wire loop that moves between the salt dishes and the flame. */
 export function FlameTestScene({ ctl, labels }: { ctl: FlameTestController; labels: { hcl: string; unknown: string; sample: string } }) {
@@ -22,6 +26,9 @@ export function FlameTestScene({ ctl, labels }: { ctl: FlameTestController; labe
   const loop = useRef<THREE.MeshStandardMaterial>(null)
   const target = useMemo(() => new THREE.Color(), [])
   const pos = useMemo(() => REST.clone(), [])
+  const flame = useRef<THREE.Group>(null)
+  const lastDip = useRef({ dips: ctl.dips, at: -Infinity })
+  const sparks = useRef<THREE.Group>(null)
 
   useFrame((state) => {
     const t = state.clock.elapsedTime
@@ -44,7 +51,20 @@ export function FlameTestScene({ ctl, labels }: { ctl: FlameTestController; labe
       pos.lerp(ctl.inFlame ? IN_FLAME : REST, 0.08)
       wire.current.position.copy(pos)
     }
-    if (loop.current) loop.current.emissiveIntensity = ctl.inFlame ? 0.9 : 0
+    if (loop.current) loop.current.emissiveIntensity = ctl.inFlame && ctl.lit ? 0.9 : 0
+    // The flame grows when the burner is lit and shrinks away when it is not.
+    if (flame.current) {
+      const target = ctl.lit ? 1 : 0.0001
+      flame.current.scale.y += (target - flame.current.scale.y) * 0.15
+      flame.current.visible = flame.current.scale.y > 0.01
+    }
+    if (light.current && !ctl.lit) light.current.intensity = 0
+    // Sparks for a moment after each dip, where the salt meets the flame.
+    if (lastDip.current.dips !== ctl.dips) lastDip.current = { dips: ctl.dips, at: t }
+    if (sparks.current) {
+      sparks.current.visible = ctl.lit && t - lastDip.current.at < 1.2
+      sparks.current.position.copy(pos)
+    }
   })
 
   const dishes = [...METAL_IDS, 'unknown'] as const
@@ -70,7 +90,7 @@ export function FlameTestScene({ ctl, labels }: { ctl: FlameTestController; labe
         <meshStandardMaterial color="#d14b3a" />
       </mesh>
       {/* Flame: a bright inner cone inside the coloured outer flame */}
-      <group position={[BURNER_X, 0.95, 0]}>
+      <group ref={flame} position={[BURNER_X, 0.95, 0]}>
         <mesh ref={outer} position={[0, 0.45, 0]}>
           <coneGeometry args={[0.16, 0.9, 32, 1, true]} />
           <meshBasicMaterial ref={outerMat} color="#5a82ff" transparent opacity={0.4} depthWrite={false} side={THREE.DoubleSide} toneMapped={false} />
@@ -81,6 +101,9 @@ export function FlameTestScene({ ctl, labels }: { ctl: FlameTestController; labe
         </mesh>
       </group>
       <pointLight ref={light} position={[BURNER_X, 1.4, 0.3]} distance={4} decay={2} />
+      <group ref={sparks} visible={false}>
+        <ReactionEffect effect="spark" height={0.45} restartKey={ctl.dips} />
+      </group>
       {/* Cobalt-blue glass in front of the flame */}
       {ctl.cobaltGlass && (
         <mesh position={[BURNER_X, 1.35, 0.7]}>
@@ -117,15 +140,11 @@ export function FlameTestScene({ ctl, labels }: { ctl: FlameTestController; labe
               <sphereGeometry args={[0.1, 16, 10]} />
               <meshStandardMaterial color={id === 'unknown' ? '#e6e1d3' : (SALT_COLOR[id] ?? '#f3f4f6')} roughness={0.9} />
             </mesh>
-            <Label3D
-              lines={[id === 'unknown' ? '?' : METALS[id].salt]}
-              position={[0, 0.3, 0.05]}
-              height={0.12}
-              color={active ? '#2ccfb5' : '#e8ecf5'}
-              background="rgba(0,0,0,0.55)"
-              border="rgba(0,0,0,0)"
-              font="600 32px Inter Variable, sans-serif"
-            />
+            {id === 'unknown' ? (
+              <Label3D lines={['?']} position={[0, 0.3, 0.05]} height={0.12} color={active ? '#2ccfb5' : '#e8ecf5'} background="rgba(0,0,0,0.55)" border="rgba(0,0,0,0)" font="600 32px Inter Variable, sans-serif" />
+            ) : (
+              <ChemSubstance substance={SALT_BLOCK[id]} size={active ? 0.3 : 0.24} position={[0, 0.32, 0.05]} />
+            )}
           </group>
         )
       })}
