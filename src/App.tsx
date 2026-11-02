@@ -25,6 +25,7 @@ const router = createBrowserRouter([
       { path: '/physics', element: <SubjectPage subject="physics" /> },
       { path: '/physics/:id', element: <ExperimentRoute subject="physics" /> },
       { path: '/chemistry', element: <SubjectPage subject="chemistry" /> },
+      { path: '/chemistry/items', element: <SubjectPage subject="chemistry" tab="items" /> },
       { path: '/chemistry/:id', element: <ExperimentRoute subject="chemistry" /> },
       { path: '/biology', element: <SubjectPage subject="biology" /> },
       { path: '/biology/:id', element: <ExperimentRoute subject="biology" /> },

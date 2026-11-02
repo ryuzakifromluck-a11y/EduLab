@@ -34,6 +34,11 @@ describe('resolvePageMeta', () => {
     expect(meta('/chemistry')).toMatchObject({ title: 'Chemistry Laboratory · EduLab', image: '/og/chemistry.png' })
   })
 
+  it('indexes the chemistry Items tab as its own page', () => {
+    expect(meta('/chemistry/items')).toMatchObject({ title: 'Chemistry lab equipment and reagents · EduLab', image: '/og/chemistry.png', noindex: false })
+    expect(sitemapPaths()).toContain('/chemistry/items')
+  })
+
   it('ignores a trailing slash', () => {
     expect(meta('/physics/ohms-law/').path).toBe('/physics/ohms-law')
   })

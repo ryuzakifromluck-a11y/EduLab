@@ -13,6 +13,7 @@ EduLab is a free, open virtual science laboratory. Students, teachers and indepe
 | Ohm's Law Circuit (switch, ammeter, voltmeter, recorded readings) | ✅ 3D + 2D fallback |
 | Acid–Base Titration (exact strong acid/strong base equilibrium, 4 indicators) | ✅ 3D + 2D fallback |
 | Projectile Motion and Reaction Rate (disappearing cross) | ✅ 3D + 2D fallback |
+| Chemistry **Lab equipment** tab (`/chemistry/items`): 130 code-drawn items in 6 categories, search, workbench with drag and drop | ✅ |
 | Live graphs (freeze-to-inspect, CSV export), Formula Explorer | ✅ |
 | Presentation Mode (fullscreen, large controls, keyboard/clicker shortcuts) | ✅ |
 | English / Uzbek / Russian, light / dark themes, responsive layout, translation completeness test | ✅ |
@@ -262,6 +263,12 @@ Design rules followed:
 4. Add `catalog.<id>` and `exp.<id>` strings to all three locale files.
 5. Optionally pass `progressSettings` (and `score`) to `ExperimentShell` so completed runs save their parameters.
 6. Add a knowledge check for it in `src/data/quizzes.ts` (a test fails if an available experiment has none).
+
+## Chemistry lab equipment catalog
+
+The Chemistry page has two tabs: **Experiments** (`/chemistry`) and **Lab equipment** (`/chemistry/items`). The catalog lives in `src/data/chemistryItems.ts` and reuses the equipment, substance and reaction-effect catalogs in `src/lib/chemistry/`; extra drawings (reagent bottles, gas jars, small tools) are in `src/lib/chemistry/itemDrawings.ts`.
+
+Every picture is drawn in code and every sound is synthesised, so the repository holds no third-party artwork. To use a real picture for an item (for example licensed artwork), put the file under `public/chemistry/` and set the item's `image` field to its URL; the drawing stays as the fallback if the file fails to load.
 
 ## Knowledge checks
 

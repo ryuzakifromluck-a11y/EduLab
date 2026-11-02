@@ -13,10 +13,12 @@ export const ATOMIC_MASS: Record<string, number> = {
   Cl: 35.45,
   K: 39.098,
   Ca: 40.078,
+  Mn: 54.938,
   Fe: 55.845,
   Cu: 63.546,
   Zn: 65.38,
   Sr: 87.62,
+  I: 126.904,
   Ba: 137.327,
 }
 
